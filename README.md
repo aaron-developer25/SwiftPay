@@ -7,19 +7,14 @@
 
 <div>
   <a href="https://github.com/aaron-developer25" style="display: inline-block;">
-    <img src="https://github.com/aaron-developer25/README/blob/main/recursos/aarondeveloper.jpg?raw=true" alt="aarondeveloper" style="width: 25%;  max-height: 20%; border-radius: 30%;">
+    <img src="https://github.com/aaron-developer25/README/blob/main/recursos/aarondeveloper.png?raw=true" alt="aarondeveloper" style="width: 25%;">
   </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://github.com/ruthcasilla" style="display: inline-block;">
-    <img src="https://github.com/aaron-developer25/README/blob/main/recursos/ruthcasilla.jpg?raw=true" alt="ruthcasilla" style="width: 25%; max-height: 20%; border-radius: 30%;">
+    <img src="https://github.com/aaron-developer25/README/blob/main/recursos/ruthcasilla.png?raw=true" alt="ruthcasilla" style="width: 25%;">
   </a>
 </div>
 
-
-
-
-![Totals Hits](https://komarev.com/ghpvc/?username=SP-XD&style=flat&color=orange&label=PROFILE+VIEWS)
-![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FSP-XD&count_bg=%2379C83D&title_bg=%23555555&icon=mediafire.svg&icon_color=%23E7E7E7&title=HITS&edge_flat=false)
-[![telegram badge](https://img.shields.io/badge/Aaron%20Developer-grey?style=flat&logo=telegram)](https://t.me/Aaron_Garcia) <br>
 </div>
 
 <hr></hr>
