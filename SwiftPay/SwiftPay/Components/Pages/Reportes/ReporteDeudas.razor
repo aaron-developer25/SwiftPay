@@ -1,0 +1,392 @@
+﻿
+@page "/reporteRegantesAdeudado"
+
+@inject IJSRuntime JSRuntime
+@inject RegantesService RegantesService
+@inject DetalleReganteService DetalleReganteService
+@inject ParametrosService ParametrosService
+@inject EmpresaService EmpresaService
+@rendermode InteractiveServer
+
+
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+<PageTitle>Regantes Adeudados</PageTitle>
+
+
+@if (acceso == "permitido")
+{
+<div class="card" style="border-radius: 20px;">
+
+	<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+		<div class="row text-white text-center">
+			<h3>Regantes Adeudados</h3>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<div class="row mb-4">
+			<div class="text-end">
+				<button class="btn btn-success" @onclick="ImprimirReporte"><img style="width: 28px; height: 28px; background: none; border: none;" src="/iconos/ico_impresosra.png" /> Imprimir Reporte</button>
+			</div>
+		</div>
+
+			<table class="table table-bordered text-center">
+				<thead class="bg-primary text-white">
+					<tr>
+						<th>Codigo</th>
+						<th>Nombre</th>
+						<th>Apellido</th>
+						<th>Telefono</th>
+						<th>Correo Electronico</th>
+						<th>Deuda</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (ListarRegantes.Any())
+					{
+						@foreach (var item in ListarRegantes)
+						{
+							int cantidadPagosVencidos = 0;
+							float cuotaActual = 0;
+							float regargos = 0;
+							float cuotaSuplementaria = 0;
+							float totalPagar = 0;
+
+							@if (parametro != null && item != null)
+							{
+								var fechaActual = DateTime.Now;
+								var diferenciaDias = (fechaActual - item.FechaUltimoPago).Days;
+								var diasPasados = diferenciaDias / parametro.TiempoProximoPago * parametro.TiempoProximoPago;
+
+								cantidadPagosVencidos = diasPasados / parametro.TiempoProximoPago;
+
+								if (cantidadPagosVencidos >= 1)
+								{
+									foreach (var item3 in ListadetalleRegantes)
+									{
+										if (item3.TipoIrrigacion == "Bomba" && item.ReganteId == item3.ReganteId)
+										{
+											cuotaActual += item3.Tareas * parametro.MontoBomba;
+										}
+										else if (item3.TipoIrrigacion == "Gravedad" && item.ReganteId == item3.ReganteId)
+										{
+											cuotaActual += item3.Tareas * parametro.MontoGravedad;
+										}
+									}
+
+									if (cantidadPagosVencidos >= 2)
+									{
+										regargos = (cuotaActual * parametro.PorcentajeRecargos / 100) * (cantidadPagosVencidos - 1);
+									}
+
+
+
+									Console.WriteLine("Cuota Actual Antes: " + cuotaActual);
+
+									cuotaActual *= cantidadPagosVencidos;
+									cuotaSuplementaria = item.MontoSuplementerio;
+
+									Console.WriteLine("Cuota Actual Despues: " + cuotaActual);
+
+									totalPagar = cuotaActual + regargos - cuotaSuplementaria;
+									Console.WriteLine("Total a pagar: " + totalPagar);
+								}
+							}
+
+							<tr>
+								@if(totalPagar > 0)
+								{
+									<td>@item.CodigoRegante</td>
+									<td>@item.Nombre</td>
+									<td>@item.Apellido</td>
+									<td>@item.Telefono</td>
+									<td>@item.CorreoElectronico</td>
+									<td>@totalPagar.ToString("N2")</td>
+								}
+							</tr>
+
+						}
+					}
+					else
+					{
+						<tr>
+							<td colspan="8" class="text-center">No se ha encontrado regantes</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+</div>
+
+}
+else if (acceso == "denegado")
+{
+
+	<style>
+
+		.container {
+			text-align: center;
+			max-width: 600px;
+			padding: 10px;
+			background-color: #fff;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+			margin-top: 18%;
+		}
+
+			.container h1 {
+				font-size: 2.5rem;
+				color: #333;
+				margin-bottom: 20px;
+			}
+
+			.container p {
+				font-size: 1.2rem;
+				color: #666;
+				margin-bottom: 30px;
+			}
+
+			.container i {
+				font-size: 4rem;
+				color: #f44336;
+			}
+	</style>
+
+
+	<div class="container">
+		<i class="fas fa-exclamation-triangle"></i>
+		<h1>ACCESO RESTRINGIDO</h1>
+		<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+		<p>¡Regrese mas tarde!</p>
+	</div>
+}
+
+
+
+
+
+
+
+
+<div id="reporte" class="modal-body d-none" style="height: 35rem; overflow-y: auto;">
+
+	<div class="row d-flex align-items-center justify-content-center" style="margin-top: 50px;">
+		<div id="logoEmpresa" class="text-center">
+			<img style="width: 150px; height: 120px; border-radius: 10%;" src="@obtenerLogotipo()" />
+		</div>
+		<h5 class="fw-bold fs-6 text-center">@empresa.Nombre</h5>
+
+		<div class="row" style="justify-content: center;">
+			<div id="telefonoEmpresa" class="col text-start">
+				<label class="fw-bold"> <i class="fas fa-phone"></i> Telf.: <span class="fw-normal">@empresa.Telefono</span></label>
+			</div>
+			<div id="rnc" class="col text-end">
+				<label class="fw-bold"> <i class="fas fa-building"></i> RNC: <span class="fw-normal">@empresa.RNC</span></label>
+			</div>
+		</div>
+
+		<div id="direccionEmpresa" class="fw-bold text-center">
+			<label> <i class="fas fa-map-marker"></i> Dirc.: <span class="fw-normal"> @empresa.Direccion</span></label>
+		</div>
+
+		<div class="row" style="text-align: end; margin-right: 15px;">
+			<div class="text-end">
+				<label class="fw-bold">Fecha de emisión: <span class="fw-normal">@DateTime.Now.ToString("dd/MM/yyyy")</span></label>
+			</div>
+			<div class="text-end">
+				<label class="fw-bold">Hora de emisión: <span class="fw-normal">@DateTime.Now.ToString("HH:mm:ss")</span></label>
+			</div>
+		</div>
+
+		<div class="row" style="justify-content: center; margin-top: 30px; margin-bottom: 20px;">
+			<div class="col text-center">
+				<h5 class="fw-bold">REPORTE DE REGANTES ADEUDADOS</h5>
+			</div>
+		</div>
+	</div>
+
+
+	<table class="table table-bordered text-center">
+		<thead class="bg-primary text-white" style="margin-left: 30px; margin-right: 30px;">
+			<tr>
+				<th>Código</th>
+				<th>Nombre</th>
+				<th>Apellido</th>
+				<th>Teléfono</th>
+				<th>Correo Electrónico</th>
+				<th>Deuda</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (ListarRegantes.Any())
+			{
+				@foreach (var item in ListarRegantes)
+				{
+					int cantidadPagosVencidos = 0;
+					float cuotaActual = 0;
+					float regargos = 0;
+					float cuotaSuplementaria = 0;
+					float totalPagar = 0;
+
+					@if (parametro != null && item != null)
+					{
+						var fechaActual = DateTime.Now;
+						var diferenciaDias = (fechaActual - item.FechaUltimoPago).Days;
+						var diasPasados = diferenciaDias / parametro.TiempoProximoPago * parametro.TiempoProximoPago;
+
+						cantidadPagosVencidos = diasPasados / parametro.TiempoProximoPago;
+
+						if (cantidadPagosVencidos >= 1)
+						{
+							foreach (var item3 in ListadetalleRegantes)
+							{
+								if (item3.TipoIrrigacion == "Bomba" && item.ReganteId == item3.ReganteId)
+								{
+									cuotaActual += item3.Tareas * parametro.MontoBomba;
+								}
+								else if (item3.TipoIrrigacion == "Gravedad" && item.ReganteId == item3.ReganteId)
+								{
+									cuotaActual += item3.Tareas * parametro.MontoGravedad;
+								}
+							}
+
+							if (cantidadPagosVencidos >= 2)
+							{
+								regargos = (cuotaActual * parametro.PorcentajeRecargos / 100) * (cantidadPagosVencidos - 1);
+							}
+
+							cuotaActual *= cantidadPagosVencidos;
+							cuotaSuplementaria = item.MontoSuplementerio;
+
+							totalPagar = cuotaActual + regargos - cuotaSuplementaria;
+						}
+					}
+
+					<tr>
+						@if (totalPagar > 0)
+						{
+							<td>@item.CodigoRegante</td>
+							<td>@item.Nombre</td>
+							<td>@item.Apellido</td>
+							<td>@item.Telefono</td>
+							<td>@item.CorreoElectronico</td>
+							<td>@totalPagar.ToString("N2")</td>
+
+							sumatoriaReporte += totalPagar;
+						}
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="6" class="text-center">No se ha encontrado regantes</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<div class="row mb-5 derecha">
+		<div class="datoInferior">
+			<div class="text-end" style="margin-right: 30px;">
+				<label class="fw-bold">TOTAL ADEUDADO:</label>
+				<span>RD$ @sumatoriaReporte.ToString("N2")</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row text-center centrado datoInferior" style="margin-top: 40px; margin-left: 30px; margin-right: 30px;">
+		<label style="font-weight: normal;" class="fw-bold"><label style="font-weight: normal;" class="fw-bold">ESTE REPORTE PRESENTA INFORMACIÓN CRUCIAL SOBRE LOS REGANTES QUE AÚN NO HAN CUMPLIDO CON SUS OBLIGACIONES DE PAGO A LA EMPRESA, CABE DESTACAR QUE EL INFORME PIERDE VALIDES AL MOMENTO DE SER EMITIDO YA QUE LOS DATOS FILTRADOS PUEDEN VARIAR EN CUALQUIER MOMENTO.</label>.</label>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+	private string filtro = "1", busqueda = "";
+	private float sumatoriaReporte = 0;
+
+	public List<Regantes> ListarRegantes = new List<Regantes>();
+	public Empresa empresa = new Empresa();
+	public DetalleRegante detalleRegante = new DetalleRegante();
+	public Parametros parametro = new Parametros();
+	public List<DetalleRegante> ListadetalleRegantes = new List<DetalleRegante>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		ListarRegantes = await RegantesService.Listar(c => true);
+		ListadetalleRegantes = await DetalleReganteService.Listar(c => true);
+		parametro = await ParametrosService.Buscar(1);
+
+		var busqueda = await EmpresaService.Buscar(1);
+		if (busqueda != null)
+		{
+			empresa = busqueda;
+		}
+		else
+		{
+			empresa.Nombre = "EMPRESA POR DEFECTO";
+			empresa.Telefono = "(000)-000-0000";
+			empresa.RNC = "345-E-J-PLO";
+			empresa.Direccion = "ejemplo@gmail.com";
+		}
+	}
+
+	public async Task ImprimirReporte()
+	{
+		await JSRuntime.InvokeVoidAsync("printReportes");
+		sumatoriaReporte = 0;
+	}
+
+
+	public string obtenerLogotipo()
+	{
+		if (empresa.Imagen != null && empresa.Imagen.Length > 0)
+		{
+			string base64String = Convert.ToBase64String(empresa.Imagen);
+			return $"data:image/png;base64,{base64String}";
+		}
+		else
+		{
+			return "imagen/sinLogo.jpg";
+		}
+	}
+
+}
+
+
