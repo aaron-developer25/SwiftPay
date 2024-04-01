@@ -1,0 +1,206 @@
+﻿@page "/"
+
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+
+@inject NavigationManager NavigationManager
+@inject RegantesService RegantesService
+@inject NotificationService NotificationService
+
+<RadzenNotification />
+
+<PageTitle>Formalización</PageTitle>
+
+@if (acceso == "permitido")
+{
+	<div>
+		<div class="row justify-content-end">
+			<div class="text-end">
+				<div>
+					<img style="width: 32px; height: 32px; margin-top: -5px;" src="/iconos/ico-lupa.png" />
+					<h4 class="fw-bold" style="display: inline; margin-right: 130px;">Centro de Búsqueda</h4>
+					<label style="display: block; margin-right: 70px;">Introduzca en el campo de búsqueda para filtrar datos del cobro</label>
+				</div>
+			</div>
+
+			<div class="row justify-content-end">
+
+				<div class="justify-content-end" style="width: 250px;">
+					<select class="form-select" @bind="filtro">
+						<option value="1">Cedula Regante</option>
+						<option value="2">Codigo Regante</option>
+					</select>
+				</div>
+
+				<div class="input-group" style="width: 350px;">
+					<InputText class="form-control" @bind-Value="busqueda" placeholder="Buscar"></InputText>
+					<button class="btn btn-outline-primary" @onclick="Buscar"><img style="width: 28px; height: 28px; background: none; border: none;" src="/iconos/ico-lupa.png" /></button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<div class="text-center">
+
+		<img src="animaciones/plantilla.gif" />
+
+	</div>
+}
+else if(acceso == "denegado")
+{
+
+	<style>
+
+		.container {
+			text-align: center;
+			max-width: 600px;
+			padding: 10px;
+			background-color: #fff;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+			margin-top: 18%;
+
+		}
+
+			.container h1 {
+				font-size: 2.5rem;
+				color: #333;
+				margin-bottom: 20px;
+			}
+
+			.container p {
+				font-size: 1.2rem;
+				color: #666;
+				margin-bottom: 30px;
+			}
+
+			.container i {
+				font-size: 4rem;
+				color: #f44336;
+			}
+	</style>
+
+
+	<div class="container">
+		<i class="fas fa-exclamation-triangle"></i>
+		<h1>ACCESO RESTRINGIDO</h1>
+		<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+		<p>¡Regrese mas tarde!</p>
+	</div>
+}
+
+
+
+
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Cobrador" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+
+
+
+	private string filtro = "1", busqueda = "";
+
+
+	private async Task Buscar()
+	{
+
+		if (filtro == "1" && busqueda != "")
+		{
+			var existe = await RegantesService.BusquedaGeneral(c => c.Cedula == busqueda);
+			if (existe != null)
+			{
+				NavigationManager.NavigateTo("cobrar/" + existe.ReganteId);
+			}
+			else
+			{
+				Mensaje("Advertencia", "Regante no encontrado", 4000, "Advertencia");
+			}
+		}
+		else if (filtro == "2" && busqueda != "")
+		{
+			var existe = await RegantesService.BusquedaGeneral(c => c.CodigoRegante == busqueda);
+			if (existe != null)
+			{
+				NavigationManager.NavigateTo("cobrar/" + existe.ReganteId);
+			}
+			else
+			{
+				Mensaje("Advertencia", "Regante no encontrado", 4000, "Advertencia");
+
+			}
+		}
+	}
+
+
+	public void Mensaje(string cabecera, string mensaje, int tiempo, string tipo)
+	{
+		NotificationMessage objetoMensaje = null;
+
+		if (tipo == "Advertencia")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Warning,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Exito")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Error")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+
+		NotificationService.Notify(objetoMensaje);
+	}
+
+
+}
