@@ -1,0 +1,153 @@
+﻿.contenedor-principal {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fafafad7;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw; 
+    height: 100vh;
+    background-image: url('../imagenes/portada_negocios.jpeg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.login-container {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-datos {
+    position: relative;
+    width: 380px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    background-image: none;
+}
+
+
+
+.logo img {
+    width: 120px;
+    border-radius: 5%;
+    height: 120px;
+    max-width: 120px;
+    max-height: 120px;
+}
+
+h2 {
+    color: #00df5d;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.inputBox {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+    .inputBox input {
+        width: 90%;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.3);
+        outline: none;
+        border: none;
+        border-radius: 10px;
+        color: #23242a;
+        font-size: 1em;
+        transition: 0.3s;
+    }
+
+        .inputBox input:focus {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+    .inputBox span {
+        position: absolute;
+        left: 25px;
+        top: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1em;
+        transition: 0.3s;
+        pointer-events: none;
+    }
+
+    .inputBox input:focus ~ span,
+    .inputBox input:valid ~ span {
+        top: -16px;
+        font-size: 0.8em;
+        color: #00df5d;
+    }
+
+    .inputBox i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        transition: 0.3s;
+    }
+
+    .inputBox input:focus ~ i {
+        color: #00df5d;
+    }
+
+.links a {
+    font-size: 0.9em;
+    text-decoration: none;
+    color: #00df5d;
+    transition: 0.3s;
+}
+
+    .links a:hover {
+        color: #8ae2fe;
+    }
+
+.boton-acceder {
+    border: none;
+    outline: none;
+    padding: 13px;
+    background: #00b84ce3;
+    color: rgb(214, 214, 214);
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 80%;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+    .boton-acceder:hover {
+        background: #009940e3;
+    }
+
+/****** FIN ESTILO DEL LOGIN *****/
+
+
+
+/****** INICIO ESTILO PARA DISPOSITIVO TABLE O MOVIL *****/
+
+@media (max-width: 576px) {
+    .form-datos {
+        width: 280px;
+    }
+}
+
+@media (max-width: 345px) {
+    .form-datos {
+        width: 220px;
+    }
+}
+/****** FIN ESTILO PARA DISPOSITIVO TABLE O MOVIL *****/
