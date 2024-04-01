@@ -1,30 +1,140 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">SwiftPay</a>
+        <img class="navbar-img" src="./iconos/ico_menu.png" />
+        <a class="navbar-brand" href="">MENU DE OPERACION</a>
     </div>
 </div>
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+        <div class="nav-item px-3" onclick="@(() => SubMenu("Formalizar"))">
+            <NavLink id="formalizarOpcion" class="nav-link" href="" Match="NavLinkMatch.All">
+                <img style="width: 32px; height: 32px; margin-right: 5px;" src="/iconos/ico_formalizar.png" /> Formalizar
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+        <div class="nav-item px-3" onclick="@(() => SubMenu("Consultas"))">
+            <NavLink id="consultaOpcion" class="nav-link" href="consultaDatosRegante">
+                <img style="width: 32px; height: 32px; margin-right: 5px;" src="/iconos/ico_consultas.png" />  Consultas
             </NavLink>
+ 
+            @if (subMenuConsultar)
+            {
+                <div class="sub-menu">
+                    <span class="texto" onclick="@(() => Dirigir("Consultas", "consultaDatosRegante"))">Datos del Regante</span>
+                    <span class="texto" onclick="@(() => Dirigir("Consultas", "consultaBalanceRegante"))">Balance del Regante</span>
+                    <span class="texto" onclick="@(() => Dirigir("Consultas", "consultaHistorialPago"))">Historial de Pagos</span>
+                    <span class="texto" onclick="@(() => Dirigir("Consultas", "consultaHistorialSalidaCaja"))">Salida de Caja</span>
+                </div>
+            }
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+        <div class="nav-item px-3" onclick="@(() => SubMenu("Procesos"))">
+            <NavLink id="procesosOpcion" class="nav-link" href="centroUsuario">
+                <img style="width: 32px; height: 32px; margin-right: 5px;" src="/iconos/ico_procesos.png"/>  Procesos
             </NavLink>
+
+            @if (subMenuProcesos)
+            {
+                <div class="sub-menu">
+                    <span class="texto" onclick="@(() => Dirigir("Procesos", "centroUsuario"))">Centro de Usuarios</span>
+                    <span class="texto" onclick="@(() => Dirigir("Procesos", "centroRegantes"))">Centro de Regantes</span>
+                    <span class="texto" onclick="@(() => Dirigir("Procesos", "centroAsociaciones"))">Centro de Asociaciones</span>
+                    <span class="texto" onclick="@(() => Dirigir("Procesos", "centroBloques"))">Centro de Bloques</span>
+                    <span class="texto" onclick="@(() => Dirigir("Procesos", "centroSalidaCaja"))">Salida de Caja</span>
+                </div>
+            }
+        </div>
+
+        <div class="nav-item px-3" onclick="@(() => SubMenu("Reportes"))">
+            <NavLink id="reportesOpcion" class="nav-link" href="reporteRegantesAdeudado">
+                <img style="width: 32px; height: 32px; margin-right: 5px;" src="/iconos/ico_reportes.png"/>  Reportes
+            </NavLink>
+
+            @if (subMenuReportes)
+            {
+                <div class="sub-menu">
+                    <span class="texto" onclick="@(() => Dirigir("Reportes", "reporteRegantesAdeudado"))">Regantes Deudados</span>                    
+                    <span class="texto" onclick="@(() => Dirigir("Reportes", "reporteRegantePagos"))">Reporte de Pagos</span>
+                    <span class="texto" onclick="@(() => Dirigir("Reportes", "reportesSalidaCaja"))">Regantes Salida de Caja</span>
+                </div>
+            }
+        </div>
+
+        <div class="nav-item px-3" onclick="@(() => SubMenu("Ajustes"))">
+            <NavLink id="ajustesOpcion" class="nav-link" href="ajustesEmpresa">
+                <img style="width: 32px; height: 32px; margin-right: 5px;" src="/iconos/ico_ajustes.png"/>  Ajustes
+            </NavLink>
+
+            @if (subMenuAjustes)
+            {
+                <div class="sub-menu">
+                    <span class="texto" onclick="@(() => Dirigir("Ajustes", "ajustesEmpresa"))">Empresa</span>
+                    <span class="texto" onclick="@(() => Dirigir("Ajustes", "ajustesParametros"))">Parametros Operacionales</span>
+                </div>
+            }
         </div>
     </nav>
 </div>
+
+<div class="top-row-final ps-3 navbar navbar-dark">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <div>
+            <img class="navbar-img-final" src="./iconos/ico_licencia.png" />
+            <span class="navbar-brand-final" href="">LICENCIA HASTA EL</span>
+            <span class="navbar-fecha-final" href="">25/09/2024</span>
+        </div>   
+    </div>
+</div>
+
+
+@code {
+    private bool subMenuConsultar = false;
+    private bool subMenuProcesos = false;
+    private bool subMenuReportes = false;
+    private bool subMenuAjustes = false;
+
+    private void SubMenu(string menu)
+    {
+        subMenuConsultar = false;
+        subMenuProcesos = false;
+        subMenuReportes = false;
+        subMenuAjustes = false;
+
+        if (menu == "Formalizar")
+        {
+
+        }
+        else if (menu == "Consultas")
+        {          
+            subMenuConsultar = true;
+        }
+        else if (menu == "Procesos")
+        {
+            subMenuProcesos = true;
+        }
+        else if (menu == "Reportes")
+        {
+            subMenuReportes = true;
+        }
+        else if (menu == "Ajustes")
+        {
+            subMenuAjustes = true;
+        }
+        IJSRuntime.InvokeVoidAsync("cambiarColorMenu", menu);
+    }
+
+
+    private void Dirigir(string tipo, string url)
+    {
+        IJSRuntime.InvokeVoidAsync("cambiarColorMenu", tipo);
+        NavigationManager.NavigateTo(url);
+    }
+}
+
 

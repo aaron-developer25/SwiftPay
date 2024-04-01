@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject AutentificacionService AutentificacionService
+@inject UsuariosService UsuariosService
 
 <div class="page">
     <div class="sidebar">
@@ -6,8 +9,12 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <h5 style="font-weight: bold; margin-top: 10px;">Sistema de Cobro (SwiftPay)</h5>
+            <div class="d-flex justify-content-end align-items-center">
+                <img @onclick="Perfil" style="width: 28px; height: 28px; margin-right: 10px; cursor: pointer;" src="/iconos/ico_perfil.png" />
+                <img @onclick="CerrarSesion" style="width: 28px; height: 28px; margin-left: 10px; cursor: pointer;" src="/iconos/ico_cerrarSesion.png" />
+            </div>
         </div>
 
         <article class="content px-4">
@@ -16,8 +23,91 @@
     </main>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+
+
+@if (ModalPerfil)
+{
+    <div class="modal d-block autoridad">
+        <div style="width: 20rem;" class="position-fixed top-50 start-50 translate-middle">
+
+            <div class="modal-content" style="border-radius: 32px;">
+
+                <div class="card-header text-white bg-primary" style="height: 35px; border-radius: 30px 30px 0px 0px;">
+                    <h5 class="fs-6 fw-bold"><img style="width: 20px; height: 20px;" src="iconos/ico_perfil.png"/> Perfil </h5>
+                    <div class="text-end d-flex justify-content-end align-items-end" style="margin-top: -30px;">
+                        <button style="border-radius: 50%; background-color: red; border: none; width: 20px; height: 20px;" @onclick="(() => cerrarPerfil())"></button>
+                    </div>
+                </div>
+
+                <div class="modal-body text-center">
+                    <div class="row">
+                        <label class="fw-bold">Usuario:</label>
+                        <span>@usuario.Usuario</span>
+                    </div>
+
+                    <div class="row">
+                        <label class="fw-bold">Nombre Completo:</label>
+                        <span>@usuario.Nombre @usuario.Apellido</span>
+                    </div>
+
+                    <div class="row">
+                        <label class="fw-bold">Cedula:</label>
+                        <span>@usuario.Cedula</span>
+                    </div>
+
+                    <div class="row">
+                        <label class="fw-bold">Telefono:</label>
+                        <span>@usuario.Telefono</span>
+                    </div>
+
+                    <div class="row">
+                        <label class="fw-bold">Correo Electronico:</label>
+                        <span>@usuario.CorreoElectronico</span>
+                    </div>
+
+                    <div class="row">
+                        <label class="fw-bold">Rol:</label>
+                        <span>@usuario.Rol</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code{
+
+    private bool ModalPerfil = false;
+    Usuarios usuario = new Usuarios();
+
+
+    public async void Perfil()
+    {
+        var usuarioActual  = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+        if (usuarioActual != null)
+        {
+            usuario = usuarioActual;
+            ModalPerfil = true;
+        }
+        else
+        {
+            CerrarSesion();
+        }
+        StateHasChanged();
+    }
+
+
+    public void cerrarPerfil()
+    {
+        ModalPerfil = false;
+    }
+
+    public async void CerrarSesion()
+    {
+        await AutentificacionService.CerrarSesion(JSRuntime);
+
+    }
+
+}
+
