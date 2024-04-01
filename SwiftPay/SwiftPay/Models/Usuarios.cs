@@ -25,7 +25,6 @@ namespace SwiftPay.Models
         public string? Cedula { get; set; }
 
         [Required(ErrorMessage = "El campo Usuario es obligatorio")]
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ0-9]*$", ErrorMessage = "El usuario debe comenzar con una letra mayúscula y solo puede contener letras y números.")]
         public string? Usuario { get; set; }
 
         [Required(ErrorMessage = "El campo Contraseña es obligatorio")]
@@ -33,7 +32,6 @@ namespace SwiftPay.Models
         public string? Contrasena { get; set; }
 
         [Required(ErrorMessage = "El campo Teléfono es obligatorio")]
-        [RegularExpression(@"^\d{9}$", ErrorMessage = "El número de teléfono debe tener exactamente 9 dígitos")]
         public string? Telefono { get; set; }
 
         [Required(ErrorMessage = "El campo Correo Electrónico es obligatorio")]

@@ -15,7 +15,6 @@ namespace SwiftPay.Models
         public string? CodigoRegante { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ0-9]*$", ErrorMessage = "El usuario debe comenzar con una letra mayúscula y solo puede contener letras y números.")]
         public string? Usuario { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
@@ -23,11 +22,9 @@ namespace SwiftPay.Models
         public string? Contrasena { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ ]*$", ErrorMessage = "El nombre debe comenzar con una letra mayúscula y solo puede contener letras y espacios.")]
         public string? Nombre { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ ]*$", ErrorMessage = "El apellido debe comenzar con una letra mayúscula y solo puede contener letras y espacios.")]
         public string? Apellido { get; set; }
 
         public string? Apodo { get; set; }
@@ -37,11 +34,9 @@ namespace SwiftPay.Models
         public string? CorreoElectronico { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [RegularExpression(@"^\d{9}$", ErrorMessage = "El número de teléfono debe tener exactamente 9 dígitos y no puede contener letras.")]
         public string? Telefono { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ ]*$", ErrorMessage = "La nacionalidad debe comenzar con una letra mayúscula y solo puede contener letras y espacios.")]
         public string? Nacionalidad { get; set; }
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
@@ -51,13 +46,11 @@ namespace SwiftPay.Models
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
         public string? Direccion { get; set; }
 
-        [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ]*$", ErrorMessage = "El estado debe comenzar con una letra mayúscula y solo puede contener letras.")]
         public bool Estado { get; set; }
 
         public DateTime FechaUltimoPago { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
-        [Range(0, float.MaxValue, ErrorMessage = "El monto suplementario no puede ser negativo")]
         public float MontoSuplementerio { get; set; }
 
     }
