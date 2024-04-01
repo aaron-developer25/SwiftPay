@@ -1,10 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using Radzen;
 using SwiftPay.Components;
+using SwiftPay.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("ConStr");
+builder.Services.AddDbContext<Context>(op => op.UseSqlServer(ConStr));
+
+
+builder.Services.AddScoped<NotificationService>();
+
+
+
 
 var app = builder.Build();
 
