@@ -1,0 +1,70 @@
+﻿@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject IJSRuntime JSRuntime
+@inject AutentificacionService AutentificacionService
+@inject NotificationService NotificationService
+
+<RadzenNotification />
+
+<link rel="stylesheet" href="./estilos/login.css" />
+
+<PageTitle>Iniciar Sesion</PageTitle>
+
+<!-- INICIO LOGIN (INICIAR SESION) -->
+
+<div class="contenedor-principal">
+
+	<div class="login-container">
+		<div class="form-datos">
+			<div class="logo">
+				<img src="./imagenes/logoSwiftPayOficial.png" alt="Logo">
+			</div>
+			<h2>Iniciar Sesión</h2>
+			<div>
+				<div class="inputBox">
+					<input type="text" id="usuario" @bind="usuario.Usuario" required="required">
+					<span>Usuario</span>
+					<i></i>
+				</div>
+				<div class="inputBox">
+					<input type="password" id="contrasena" @bind="usuario.Contrasena" required="required">
+					<span>Contraseña</span>
+					<i></i>
+				</div>
+			</div>
+			<button @onclick="Acceder" class="boton-acceder" type="buttom">Acceder</button>
+		</div>
+	</div>
+
+</div>
+
+
+
+<!-- FIN LOGIN (INICIAR SESION) -->
+
+@code {
+
+	private Usuarios usuario = new Usuarios();
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await AutentificacionService.Verificar(JSRuntime);
+		}
+	}
+
+
+	public async Task Acceder()
+	{
+		await AutentificacionService.Acceder(JSRuntime, UsuariosService, NotificationService, this.usuario.Usuario, this.usuario.Contrasena);
+		this.usuario.Usuario = "";
+		this.usuario.Contrasena = "";
+	}
+
+
+
+
+
+}
