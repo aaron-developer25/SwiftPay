@@ -2,7 +2,7 @@
 
 <img src="https://github.com/aaron-developer25/README/blob/main/recursos/logoSwiftPayOficial.png?raw=true" href="https://github.com/aaron-developer25" alt="Logo"  width="60%"/><br> 
 
-<p><strong>SISTEMA DE COBRO (SWIFTPAY).
+<p><strong>SISTEMA DE COBRO (SWIFTPAY)
 <br><br> ❤️ EQUIPO INVOLUCRADO ❤️</strong></p>
 
 <div>
