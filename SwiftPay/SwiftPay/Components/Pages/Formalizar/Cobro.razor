@@ -1,0 +1,866 @@
+﻿@page "/cobrar"
+@page "/cobrar/{ReganteID:int}"
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject RegantesService RegantesService
+@inject DetalleReganteService DetalleReganteService
+@inject ParametrosService ParametrosService
+@inject PagosService PagosService
+@inject DetallePagosService DetallePagosService
+@inject EmpresaService EmpresaService
+
+@rendermode InteractiveServer
+@inject AutentificacionService AutentificacionService
+@inject UsuariosService UsuariosService
+
+@inject NotificationService NotificationService
+<RadzenNotification />
+
+@if (acceso == "permitido")
+{
+	<div class="row">
+		<div class="col-9">
+			<div class="card mb-5" style="border-radius: 20px;">
+				<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+					<div class="row text-white text-center">
+						<h3>Datos del Regante</h3>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div class="row">
+						<div class="col-6">
+							<div>
+								<label class="fw-bold">Nombre:</label>
+								<span>@regante.Nombre @regante.Apellido</span>
+							</div>
+							<div>
+								<label class="fw-bold">Cedula:</label>
+								<span>@regante.Cedula</span>
+							</div>
+							<div>
+								<label class="fw-bold">Codigo Regante:</label>
+								<span>@regante.CodigoRegante</span>
+							</div>
+							<div>
+								<label class="fw-bold">Direccion:</label>
+								<span>@regante.Direccion</span>
+							</div>
+						</div>
+
+
+						<div class="col-6">
+							<div>
+								<label class="fw-bold">Telefono:</label>
+								<span>@regante.Telefono</span>
+							</div>
+							<div>
+								<label class="fw-bold">Tareas:</label>
+								<span>@tareasTotal</span>
+							</div>
+							<div>
+								<label class="fw-bold">Estado:</label>
+								<span>
+									@if (regante.Estado == true)
+									{
+										<text>Activo</text>
+									}
+									else
+									{
+										<text>Inactivo</text>
+									}
+								</span>
+
+							</div>
+							<div>
+								<label class="fw-bold">Ultimo Pago Regitrado:</label>
+								<span>@regante.FechaUltimoPago.ToString("dd/MM/yyyy")</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card  mb-5" style="border-radius: 20px;">
+				<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+					<div class="row text-white text-center">
+						<h3>Balance del Regante</h3>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<table class="table table-borderless">
+
+						<thead>
+							<tr>
+								<th>Descripcion</th>
+								<th>Monto</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Cuota Actual</td>
+								<td>RD$ @cuotaActual.ToString("N2") ( @cantidadPagosVencidos periodos )</td>
+							</tr>
+
+							<tr>
+								<td>Recargos</td>
+								<td>RD$ @regargos.ToString("N2")  @if (@cantidadPagosVencidos >= 2)
+									{
+										<text> ( @(cantidadPagosVencidos - 1) pediodos atrasados )</text>
+									}</td>
+							</tr>
+
+							<tr>
+								<td>Cuota Suplementaria</td>
+								<td>RD$ @cuotaSuplementaria.ToString("N2")</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="text-end">
+						<label class="fw-bold">Total a pagar: </label>
+						<label>RD$ @totalPagar.ToString("N2")</label>
+					</div>
+				</div>
+				<div class="card-footer">
+					<div class="text-end">
+						<button @onclick="(() => abrirIngresoCaja())" class="btn btn-success"><i class="fas fa-dollar-sign"></i> COBRAR AHORA</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-3">
+			<div>
+				<div class="card" style="border-radius: 20px;">
+					<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+						<div class="row text-white text-center">
+							<h3>Parcelas del Regante</h3>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<table class="table table-bordered">
+
+							<thead>
+								<tr>
+									<th>Parcela</th>
+									<th>Irrigacion</th>
+									<th>Tareas</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								@foreach (var item in ListadetalleRegantes)
+								{
+									<tr>
+										<td>@item.CodigoParcela</td>
+										<td>@item.TipoIrrigacion</td>
+										<td>@item.Tareas</td>
+									</tr>
+								}
+
+							</tbody>
+						</table>
+
+						<div class="text-end">
+							<label class="fw-bold">Tareas total:</label>
+							<label>@tareasTotal</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+else if(acceso == "denegado")
+{
+
+<style>
+
+	.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+	}
+
+		.container h1 {
+			font-size: 2.5rem;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.container p {
+			font-size: 1.2rem;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.container i {
+			font-size: 4rem;
+			color: #f44336;
+		}
+</style>
+
+
+<div class="container">
+	<i class="fas fa-exclamation-triangle"></i>
+	<h1>ACCESO RESTRINGIDO</h1>
+	<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+	<p>¡Regrese mas tarde!</p>
+</div>
+}
+
+
+
+
+
+@if (ModalIngresoCaja)
+{
+	<div class="modal d-block autoridad">
+		<div style="width: 55rem;" class="position-fixed top-50 start-50 translate-middle">
+
+			<div class="modal-content" style="border-radius: 32px;">
+
+				<div class="card-header text-white bg-primary" style="height: 35px; border-radius: 30px 30px 0px 0px;">
+					<h5 class="fs-6 fw-bold"><img style="width: 20px; height: 20px;" src="iconos/ico_compra.png" /> Ingreso de Caja </h5>
+					<div class="text-end d-flex justify-content-end align-items-end" style="margin-top: -30px;">
+						<button style="border-radius: 50%; background-color: red; border: none; width: 20px; height: 20px;" @onclick="(() => cerrarIngresoCaja())"></button>
+					</div>
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-7">
+							<div class="row">
+								<h5 class="fw-bold fs-6">Sub Total RD$: <label class="fw-normal">@subTotal.ToString("N2")</label></h5>
+								<h5 class="fw-bold fs-6">Recargos RD$: <label class="fw-normal">@regargos.ToString("N2")</label></h5>
+								<h5 class="fw-bold fs-6">Suplementaria RD$: <label class="fw-normal">@cuotaSuplementaria.ToString("N2")</label></h5>
+								<h5 class="fw-bold fs-6">Total RD$: <label class="fw-normal mb-5">@totalPagar.ToString("N2")</label></h5>
+							</div>
+
+
+							<div class="row">
+								<div class="col-0 mb-5">
+									<h5 class="fw-bold fs-6">Método de Pago</h5>
+									<div class="form-check">
+										<label>
+											<input class="form-check-input" type="radio" @onclick="cambiarMetodoPago" name="metodo_pago" value="efectivo" checked>
+											Efectivo
+										</label>
+										@if (metodoPago == "efectivo")
+										{
+											<div class="col-5">
+												<InputText class="form-control border-success" @bind-Value="montoPagado" @oninput="calcularDevuelta" disabled></InputText>
+											</div>
+										}
+									</div>
+									<div class="form-check">
+										<label>
+											<input class="form-check-input" type="radio" @onclick="cambiarMetodoPago" name="metodo_pago" value="tarjeta">
+											Tarjeta
+										</label>
+										@if (metodoPago == "tarjeta")
+										{
+											<div class="col-5">
+												<InputText class="form-control border-success" @bind-Value="montoPagado" @oninput="calcularDevuelta" disabled></InputText>
+											</div>
+										}
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<h5 class="fw-bold">Detalles</h5>
+								<label class="fw-bold text-danger">Devuelta RD$: <span class="fw-normal text-black"> @devuelta.ToString("N2")</span></label>
+							</div>
+						</div>
+						<div style="position: absolute; margin-left: 32%; margin-top: 40px;">
+							<h5 class="fs-6 fw-bold">Teclado Numerico</h5>
+							<div class="row mb-2">
+								<div class="col">
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('1'))">1</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('2'))">2</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('3'))">3</button>
+								</div>
+							</div>
+							<div class="row mb-2">
+								<div class="col">
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('4'))">4</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('5'))">5</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('6'))">6</button>
+								</div>
+							</div>
+							<div class="row mb-2">
+								<div class="col">
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('7'))">7</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('8'))">8</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('9'))">9</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('.'))">.</button>
+									<button type="button" class="btn botonNumerico" @onclick="(() => TecladoNumerico('0'))">0</button>
+									<button type="button" class="btn botonNumerico" style="background-color: darkred;" @onclick="(() => TecladoNumerico('x'))">x</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-1" style="border-right: 2px solid black;"></div>
+
+						<div class="col-4">	
+							<div class="mb-5">
+								<label class="fw-bold">Codigo Regante:</label>
+								<label>@regante.CodigoRegante</label>
+							</div>
+							<div class="mb-5"></div>
+							<div class="text-center">
+								<label class="fw-bold"><i class="fas fa-exclamation-triangle text-warning"></i> Aviso <i class="fas fa-exclamation-triangle text-warning"></i></label>
+								<p style="font-size: 14px;">
+									Antes de proceder a imprimir su factura recuerde revisar si su impresora se encuentra debidamente enchufada al equipo. Asi evitara retraso o errores inesperados.
+								</p>
+							</div>
+							<div class="mb-5"></div>
+							<div class="text-center">
+								<button type="submit" class="btn btn-success mb-2" @onclick="(() => GuardarCobro(1))"> <i class="fas fa-print"></i> Guardar e Imprimir</button>
+								<button type="submit" class="btn btn-secondary" @onclick="(() => GuardarCobro(2))"> <i class="fas fa-save fas fa-print"></i> Solo Guardar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+
+
+
+
+
+<!-- INICIO FACTURA OCULTA PARA IMPRIMIR -->
+<div id="factura" class="d-none" style="height: 35rem; overflow-y: auto;">
+
+	<div class="row d-flex align-items-center justify-content-center">
+		<div id="logoEmpresa" class="text-center">
+			<img style="width: 150px; height: 120px; border-radius: 10%;" src="@obtenerLogotipo()" />
+		</div>
+		<h5 class="fw-bold fs-6 text-center">@empresa.Nombre</h5>
+
+		<div class="row">
+			<div id="telefonoEmpresa" class="col text-start">
+				<label class="fw-bold"> <i class="fas fa-phone"></i> Telf.: <span class="fw-normal">@empresa.Telefono</span></label>
+			</div>
+			<div id="rnc" class="col text-end">
+				<label class="fw-bold"> <i class="fas fa-building"></i> RNC: <span class="fw-normal">@empresa.RNC</span></label>
+			</div>
+		</div>
+
+		<div id="direccionEmpresa" class="fw-bold text-center">
+			<label> <i class="fas fa-map-marker"></i> Dirc.: <span class="fw-normal"> @empresa.Direccion</span></label>
+		</div>
+	</div>
+
+	<hr>
+	<h5 class="fw-bold text-center titular" style="font-size: 14px; font-weight: bold;">DATOS DEL RECIBO</h5>
+	<hr>
+
+	<div class="row">
+		<div class="col text-start">
+			<label class="fw-bold" style="font-size: 12px;">Fecha:<span class="fw-normal">@pagoFactura.Fecha.ToString("dd/MM/yyyy")</span></label>
+		</div>
+		<div id="fechaFactura" class="col text-end">
+			<label class="fw-bold" style="font-size: 12px;">Hora: <span class="fw-normal">@pagoFactura.Fecha.ToString("h:mm tt")</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">N°: <span class="fw-normal">@pagoFactura.Codigo</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">Metodo pago: <span class="fw-normal">@pagoFactura.MetodoPago</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">Cliente: <span class="fw-normal">@reganteFactura.Nombre</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">Telefono: <span class="fw-normal">@reganteFactura.Telefono</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">Email: <span class="fw-normal">@reganteFactura.CorreoElectronico</span></label>
+		</div>
+		<div class="text-start">
+			<label class="fw-bold" style="font-size: 12px;">Dirección: <span class="fw-normal">@reganteFactura.Direccion</span></label>
+		</div>
+
+	</div>
+
+	<hr>
+	<h5 class="fw-bold text-center titular" style="font-size: 14px; font-weight: bold;">DETALLES</h5>
+	<hr>
+
+	<div class="row mb-4">
+		<table>
+			<thead>
+				<tr>
+					<th>Descripción</th>
+					<th>Periodos</th>
+					<th class="text-end derecha">Importe</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in ListaDetallesPago)
+				{
+
+					float total = 0;
+
+					if (item.TipoIrrigacion == "Bomba")
+					{
+						total = item.Tareas * parametro.MontoBomba * item.Periodos;
+					}
+					else if (item.TipoIrrigacion == "Gravedad")
+					{
+						total = item.Tareas * parametro.MontoGravedad * item.Periodos;
+					}
+
+					<tr>
+						<td>
+							<div class="row">
+								<span>* @item.CodigoParcela</span>
+							</div>
+							<div class="row mb-3">
+								<span>
+									@if (item.TipoIrrigacion == "Bomba")
+									{
+										<text>[ </text>
+
+										@item.Tareas
+
+										<text> x @parametro.MontoBomba.ToString("N2") (@item.TipoIrrigacion)] </text>
+									}
+									else if (item.TipoIrrigacion == "Gravedad")
+									{
+										<text>[ </text>
+
+										@item.Tareas
+
+										<text> x @parametro.MontoGravedad.ToString("N2") (@item.TipoIrrigacion)] </text>
+									}
+								</span>
+							</div>
+						</td>
+						<td class="text-center">@item.Periodos</td>
+						<td class="text-end derecha">@total.ToString("N2")</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="row mb-5 derecha">
+		<div class="text-end">
+			<label class="fw-bold">SubTotal:</label>
+			<span>RD$ @pagoFactura.SubTotal.ToString("N2")</span>
+		</div>
+		<div class="text-end">
+			<label class="fw-bold">Recargos:</label>
+			<span>RD$ @pagoFactura.Recargos.ToString("N2")</span>
+		</div>
+		<div class="text-end">
+			<label class="fw-bold">Suplementaria:</label>
+			<span>RD$ @pagoFactura.Suplementaria.ToString("N2")</span>
+		</div>
+		<div class="text-end mb-4">
+			<label class="fw-bold">Total:</label>
+			<span>RD$ @pagoTotalFactura.ToString("N2")</span>
+		</div>
+
+		<div class="datoInferior">
+			<div class="text-end">
+				<label class="fw-bold">Pago con:</label>
+				<span>RD$ @pagoFactura.MontoPagado.ToString("N2")</span>
+			</div>
+			<div class="text-end">
+				<label class="fw-bold">Devuelta:</label>
+				<span>RD$ @pagoFactura.Devuelta.ToString("N2")</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row text-center centrado datoInferior">
+		<label class="fw-bold">@empresa.NotaFactura</label>
+	</div>
+</div>
+<!-- FIN FACTURA OCULTA PARA IMPRIMIR -->
+
+
+
+
+
+
+
+@code {
+
+	[Parameter]
+	public int ReganteID { get; set; }
+
+	public Regantes regante = new Regantes();
+	public DetalleRegante detalleRegante = new DetalleRegante();
+	public Parametros parametro = new Parametros();
+	public Pagos pago = new Pagos();
+	public List<DetalleRegante> ListadetalleRegantes = new List<DetalleRegante>();
+
+
+	public Empresa empresa = new Empresa();
+	public Pagos pagoFactura = new Pagos();
+	public Regantes reganteFactura = new Regantes();
+	public List<DetallePagos> ListaDetallesPago = new List<DetallePagos>();
+
+	private int PagoID = 0;
+	private float regargos = 0;
+	private float cuotaActual = 0;
+	private float cuotaSuplementaria = 0;
+
+	private float montoTotalGravedad = 0;
+	private float montoTotalBomba = 0;
+
+	private int cantidadPagosVencidos = 0;
+	private float tareasTotal = 0;
+	private float devuelta = 0;
+	private bool ModalIngresoCaja = false;
+	private float subTotal = 0;
+	private float totalPagar = 0;
+	private float pagoTotalFactura = 0;
+	private string metodoPago = "efectivo", montoPagado = "0";
+
+
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Cobrador" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		var busqueda = await EmpresaService.Buscar(1);
+		if (busqueda != null)
+		{
+			empresa = busqueda;
+		}
+		else
+		{
+			empresa.Nombre = "EMPRESA POR DEFECTO";
+			empresa.Telefono = "(000)-000-0000";
+			empresa.RNC = "345-E-J-PLO";
+			empresa.Direccion = "ejemplo@gmail.com";
+		}
+
+		if (ReganteID > 0)
+		{
+			regante = await RegantesService.Buscar(ReganteID);
+
+			ListadetalleRegantes = await DetalleReganteService.Listar(d => d.ReganteId == ReganteID);
+
+			@foreach (var item in ListadetalleRegantes)
+			{
+				tareasTotal += item.Tareas;
+			}
+
+
+			parametro = await ParametrosService.Buscar(1);
+
+			if (parametro != null && regante != null)
+			{
+				var fechaActual = DateTime.Now;
+				var diferenciaDias = (fechaActual - regante.FechaUltimoPago).Days;
+				var diasPasados = diferenciaDias / parametro.TiempoProximoPago * parametro.TiempoProximoPago;
+
+				cantidadPagosVencidos = diasPasados / parametro.TiempoProximoPago;
+
+				if (cantidadPagosVencidos >= 1)
+				{
+					foreach (var item in ListadetalleRegantes)
+					{
+						if (item.TipoIrrigacion == "Bomba")
+						{
+							cuotaActual += item.Tareas * parametro.MontoBomba;
+						}
+						else if (item.TipoIrrigacion == "Gravedad")
+						{
+							cuotaActual += item.Tareas * parametro.MontoGravedad;
+						}
+					}
+
+					if(cantidadPagosVencidos >= 2)
+					{
+						regargos = (cuotaActual * parametro.PorcentajeRecargos / 100) * (cantidadPagosVencidos - 1);
+					}
+
+					cuotaActual *= cantidadPagosVencidos;
+					cuotaSuplementaria = regante.MontoSuplementerio;
+
+
+
+					subTotal = cuotaActual;
+					totalPagar = cuotaActual + regargos - cuotaSuplementaria;
+
+					Mensaje("Advertencia", "El regante tiene pagos vencidos!", 4000, "Advertencia");
+				}
+				else
+				{
+					Mensaje("Advertencia", "El regante no tiene pagos vencidos!", 4000, "Advertencia");
+				}
+			}
+
+
+		}
+	}
+
+	public string obtenerLogotipo()
+	{
+		if (empresa.Imagen != null && empresa.Imagen.Length > 0)
+		{
+			string base64String = Convert.ToBase64String(empresa.Imagen);
+			return $"data:image/png;base64,{base64String}";
+		}
+		else
+		{
+			return "imagen/sinLogo.jpg";
+		}
+	}
+
+
+	public async Task cambiarMetodoPago()
+	{
+		if (metodoPago == "efectivo")
+		{
+			metodoPago = "tarjeta";
+		}
+		else
+		{
+			metodoPago = "efectivo";
+		}
+	}
+
+
+	public void calcularDevuelta()
+	{
+		if (float.TryParse(montoPagado, out float montoAux))
+		{
+			devuelta = montoAux - totalPagar;
+		}
+	}
+
+	public async Task TecladoNumerico(char numero)
+	{
+		if (numero == '0' || numero == '1' || numero == '2' || numero == '3' || numero == '4' || numero == '5' || numero == '6' || numero == '7' || numero == '8' || numero == '9' || numero == '.')
+		{
+			if (montoPagado == "0")
+			{
+				montoPagado = "";
+				montoPagado += numero.ToString();
+			}
+			else
+			{
+				montoPagado += numero.ToString();
+			}
+		}
+		else
+		{
+			montoPagado = "0";
+		}
+
+		calcularDevuelta();
+	}
+
+	private async Task abrirIngresoCaja()
+	{
+		if (totalPagar > 0)
+		{
+			ModalIngresoCaja = true;
+		}
+		else
+		{
+			//Mensaje: Este regante no debe
+		}
+	}
+
+	private async Task cerrarIngresoCaja()
+	{
+		ModalIngresoCaja = false;
+		devuelta = 0;
+		montoPagado = "0";
+		metodoPago = "efectivo";
+	}
+
+
+
+	public async Task ImprimirFactura()
+	{
+		await JSRuntime.InvokeVoidAsync("printDiv", empresa.Impresora);
+	}
+
+
+
+	public async Task registrarPago()
+	{
+		float.TryParse(montoPagado, out float monto);
+		DateTime fecha = DateTime.Now;
+		string codigoGenerado = fecha.ToString("ddMMyyyyhmmss");
+
+		pago.ReganteId = ReganteID;
+		pago.Codigo = codigoGenerado;
+		pago.Fecha = fecha;
+		pago.MetodoPago = metodoPago;
+		pago.MontoPagado = monto;
+		pago.Devuelta = devuelta;
+		pago.Recargos = regargos;
+		pago.Suplementaria = cuotaSuplementaria;
+		pago.SubTotal = subTotal;
+		pago.Estado = "Disponible";
+
+		PagoID = await PagosService.Insertar(this.pago);
+		if (PagoID != 0)
+		{
+			regante.FechaUltimoPago = fecha;
+			await RegantesService.Guardar(regante);
+
+			foreach (var item in ListadetalleRegantes)
+			{
+				DetallePagos detallePago = new DetallePagos();
+				detallePago.PagoId = PagoID;
+				detallePago.CodigoParcela = item.CodigoParcela;
+				detallePago.Tareas = item.Tareas;
+				detallePago.TipoIrrigacion = item.TipoIrrigacion;
+				detallePago.Periodos = cantidadPagosVencidos;
+
+				var guadado = await DetallePagosService.Insertar(detallePago);
+				if (!guadado)
+				{
+					Mensaje("Error", "Detalle No registrado!", 4000, "Error");
+				}
+			}
+		}
+		else
+		{
+			Mensaje("Error", "Error al registrar el pago!", 4000, "Error");
+		}
+	}
+
+
+
+	public async Task GuardarCobro(int tipo)
+	{
+		float.TryParse(montoPagado, out float monto);
+
+		if (monto >= totalPagar)
+		{
+			if (tipo == 1)
+			{
+				await registrarPago();
+
+				pagoFactura = new Pagos();
+				pagoFactura = await PagosService.Buscar(PagoID);
+				if (pagoFactura != null)
+				{
+					pagoTotalFactura = pagoFactura.SubTotal + pagoFactura.Recargos - pagoFactura.Suplementaria;
+					reganteFactura = await RegantesService.Buscar(pagoFactura.ReganteId);
+					ListaDetallesPago = await DetallePagosService.Listar(d => d.PagoId == pagoFactura.PagoId);
+				}
+
+				Mensaje("Exitoso", "Pago Registrado con exito!", 4000, "Exito");
+				PagoID = 0;
+				totalPagar = 0;
+
+				await Task.Delay(500);
+				await cerrarIngresoCaja();
+				await ImprimirFactura();
+				NavigationManager.NavigateTo("/");
+
+			}
+			else
+			{
+				await registrarPago();
+				Mensaje("Exitoso", "Pago Registrado con exito!", 4000, "Exito");
+				PagoID = 0;
+				totalPagar = 0;
+				await cerrarIngresoCaja();
+				NavigationManager.NavigateTo("/");
+			}
+		}
+		else
+		{
+			Mensaje("Advertencia", "Monto inferior al total del pago", 4000, "Advertencia");
+		}
+	}
+
+
+	public void Mensaje(string cabecera, string mensaje, int tiempo, string tipo)
+	{
+		NotificationMessage objetoMensaje = null;
+
+		if (tipo == "Advertencia")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Warning,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Exito")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Error")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+
+		NotificationService.Notify(objetoMensaje);
+	}
+
+}
