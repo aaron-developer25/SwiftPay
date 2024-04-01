@@ -6,15 +6,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="SwiftPay.styles.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default-base.css">
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
 </head>
 
 <body>
-    <Routes />
+    <div id="login" style="display: none;">
+        <Login />
+    </div>
+
+    <div id="principal" style="display: none;">
+        <Routes @rendermode=InteractiveServer />
+    </div>
+
+
+    <script>
+
+        function InsertarDatoLocal(campo, dato) {
+            localStorage.setItem(campo, dato);
+        }
+
+        function ObtenerDatoLocal(campo) {
+            return localStorage.getItem(campo);
+        }
+
+    </script>
+
     <script src="_framework/blazor.web.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+
+    <script>
+
+        function cambiarColorMenu(tipo){
+            document.getElementById("formalizarOpcion").style.backgroundColor = "transparent";
+            document.getElementById("procesosOpcion").style.backgroundColor = "transparent";
+            document.getElementById("reportesOpcion").style.backgroundColor = "transparent";
+            document.getElementById("consultaOpcion").style.backgroundColor = "transparent";
+            document.getElementById("ajustesOpcion").style.backgroundColor = "transparent";
+
+            if (tipo === "Formalizar") {
+                document.getElementById("formalizarOpcion").style.backgroundColor = "#45883F";
+
+            }
+            if (tipo === "Consultas") {
+                document.getElementById("consultaOpcion").style.backgroundColor = "#45883F";
+            }
+            else if (tipo === "Procesos") {
+                document.getElementById("procesosOpcion").style.backgroundColor = "#45883F";
+            }
+            else if (tipo === "Reportes") {
+                document.getElementById("reportesOpcion").style.backgroundColor = "#45883F";
+            }
+            else if (tipo === "Ajustes") {
+                document.getElementById("ajustesOpcion").style.backgroundColor = "#45883F";
+            }
+        }
+
+    </script>
+
+
+    <script>
+        function printDiv(impresora) {
+
+            estiloImpresion = "";
+
+            if (impresora === "58mm") {
+                estiloImpresion = "estilos/factura/factura_58mm.css";
+            }
+            else if (impresora === "80mm") {
+                estiloImpresion = "estilos/factura/factura_80mm.css";
+            }
+
+            const factura = document.createElement('iframe');
+            factura.style.display = 'none';
+            document.body.appendChild(factura);
+
+            const contenedorticket = document.getElementById('factura');
+
+            const facturaContenido = '<html><head><title>Factura</title> <link rel="stylesheet" href="' + estiloImpresion + '"></head><div>' + contenedorticket.innerHTML + '</div></html>';
+
+            factura.contentWindow.document.open();
+            factura.contentWindow.document.write(facturaContenido);
+            factura.contentWindow.document.close();
+
+            factura.onload = function () {
+                factura.contentWindow.print();
+            };
+        }
+    </script>
+
+
+    <script>
+            function printReportes() {
+
+            estiloReporte = "estilos/factura/reporte.css";
+
+            const factura = document.createElement('iframe');
+            factura.style.display = 'none';
+            document.body.appendChild(factura);
+
+            const contenedorticket = document.getElementById('reporte');
+
+            const facturaContenido = '<html><head><title>Reportes</title> <link rel="stylesheet" href="' + estiloReporte + '"></head><div>' + contenedorticket.innerHTML + '</div></html>';
+
+            factura.contentWindow.document.open();
+            factura.contentWindow.document.write(facturaContenido);
+            factura.contentWindow.document.close();
+
+            factura.onload = function () {
+                factura.contentWindow.print();
+            };
+        }
+    </script>
 </body>
 
 </html>
