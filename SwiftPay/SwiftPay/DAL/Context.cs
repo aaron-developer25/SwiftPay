@@ -28,10 +28,10 @@ namespace SwiftPay.DAL
 				{
 					UsuarioId = 1,
 					Nombre = "Administrador",
-					Apellido = "del Sistema",
-					Cedula = "000-0000000-0",
+					Apellido = "Del Sistema",
+					Cedula = "00000000000",
 					Usuario = "administrador",
-					Contrasena = "12345",
+					Contrasena = "Admin12345!!",
 					Telefono = "8090000000",
 					CorreoElectronico = "administrador-sistema@gmail.com",
 					Direccion = "Ninguna",
