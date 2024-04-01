@@ -1,0 +1,209 @@
+﻿@page "/detailsRegante"
+@page "/detailsRegante/{ReganteID:int}"
+
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject RegantesService RegantesService
+@inject DetalleReganteService DetalleReganteService
+
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+
+<PageTitle>Detalles del Regante</PageTitle>
+@if (acceso == "permitido")
+{
+<div class="card" style="border-radius: 20px;">
+	<div class="card-header bg-primary text-center" style="border-radius: 20px 20px 0px 0px;">
+		<div class="row text-white">
+			<h3>Detalles del Regante</h3>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<div class="row">
+			<div class="col-4">
+				<label class="fw-bold">Cedula:</label>
+				<span>@regante.Cedula</span>
+			</div>
+			<div class="col-4">
+				<label class="fw-bold">Usuario:</label>
+				<span>@regante.Usuario</span>
+			</div>
+			<div class="col-4">
+				<label class="fw-bold">Contraseña:</label>
+				<span>@regante.Contrasena</span>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-4">
+				<label class="fw-bold">Nombre:</label>
+				<span>@regante.Nombre</span>
+			</div>
+			<div class="col-4">
+				<label class="fw-bold">Apellido:</label>
+				<span>@regante.Apellido</span>
+			</div>
+			<div class="col-4">
+				<label class="fw-bold">Apordo:</label>
+				<span>@regante.Apodo</span>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-6">
+				<label class="fw-bold">Télefono:</label>
+				<span>@regante.Telefono</span>
+			</div>
+			<div class="col-6">
+				<label class="fw-bold">Correo Electronico:</label>
+				<span>@regante.CorreoElectronico</span>
+			</div>
+			<div class="col">
+				<label class="fw-bold">Nacionalidad:</label>
+				<span>@regante.Nacionalidad</span>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+				<label class="fw-bold">Dirección:</label>
+				<span>@regante.Direccion</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- INICIO DETALLES DE PARCELAS -->
+	<div class="card-body">
+		<div class="row">
+			<div class="mb-4"></div>
+			<table class="table table-bordered text-center">
+
+				<thead class="bg-secondary text-white">
+					<tr>
+						<th class="col-3">Parcela</th>
+						<th class="col-5">Tarea</th>
+						<th class="col-3">Tipo Irrigacion</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					@if (ListaDetallesRegante.Any())
+					{
+						@foreach (var item in ListaDetallesRegante)
+						{
+							<tr>
+								<td>@item.CodigoParcela</td>
+								<td>@item.Tareas</td>
+								<td>@item.TipoIrrigacion</td>
+							</tr>
+						}
+					}
+					else
+					{
+						<tr><td colspan="3">No hay parcelas asociadas...</td></tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- FIN DETALLES DE PARCELAS -->
+
+	<div class="card-footer">
+		<div class="text-end">
+			<a href="centroRegantes" class="btn btn-danger"><i class="fas fa-reply"></i> Retroceder</a>
+		</div>
+	</div>
+
+</div>
+
+
+}
+else if(acceso == "denegado")
+{
+
+<style>
+
+	.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+	}
+
+		.container h1 {
+			font-size: 2.5rem;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.container p {
+			font-size: 1.2rem;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.container i {
+			font-size: 4rem;
+			color: #f44336;
+		}
+</style>
+
+
+<div class="container">
+	<i class="fas fa-exclamation-triangle"></i>
+	<h1>ACCESO RESTRINGIDO</h1>
+	<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+	<p>¡Regrese mas tarde!</p>
+</div>
+}
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+	public Regantes regante = new Regantes();
+	public List<DetalleRegante> ListaDetallesRegante = new List<DetalleRegante>();
+
+	[Parameter]
+	public int ReganteID { get; set;  }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (ReganteID > 0)
+		{
+			regante = await RegantesService.Buscar(ReganteID);
+			ListaDetallesRegante = await DetalleReganteService.Listar(d => d.ReganteId == ReganteID);
+		}
+	}
+}

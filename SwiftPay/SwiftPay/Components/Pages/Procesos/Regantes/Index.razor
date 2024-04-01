@@ -1,0 +1,201 @@
+﻿@page "/centroRegantes"
+
+@inject RegantesService RegantesService
+@rendermode InteractiveServer
+
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+<PageTitle>Regantes</PageTitle>
+
+@if (acceso == "permitido")
+{
+<div class="card" style="border-radius: 20px;">
+
+	<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+		<div class="row text-white text-center">
+			<h3>Centro de Regantes</h3>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<div class="row mb-4">
+			<div class="col-3">
+				<label class="fw-bold">Filtrar por:</label>
+				<select class="form-select" @bind="filtro">
+					<option value="1">Codigo Regante</option>
+					<option value="2">Nombre</option>
+					<option value="3">Cedula</option>
+				</select>
+			</div>
+
+			<div class="col-6">
+				<label class="fw-bold">Búsqueda:</label>
+				<div class="input-group">
+					<InputText class="form-control" @bind-Value="busqueda" placeholder="Buscar"></InputText>
+					<button class="btn btn-outline-primary" @onclick="Buscar"><i class="fas fa-search"></i> Buscar</button>
+				</div>
+			</div>
+
+			<div class="col d-flex justify-content-end align-items-end">
+				<a href="createRegante" class="btn btn-success"><i class="fas fa-plus"></i> Crear</a>
+			</div>
+		</div>
+
+		<table class="table table-bordered text-center">
+			<thead class="bg-primary text-white">
+				<tr>
+					<th>Codigo</th>
+					<th>Nombre</th>
+					<th>Apellido</th>
+					<th>Télefono</th>
+					<th>Correo Eletronico</th>					
+					<th>Editar</th>
+					<th>Detalle</th>
+					<th>Eliminar</th>
+				</tr>
+			</thead>
+			<tbody>
+				@if (ListarRegantes.Any())
+				{
+					@foreach (var item in ListarRegantes)
+					{
+						<tr>
+							<td>@item.CodigoRegante</td>
+							<td>@item.Nombre</td>
+							<td>@item.Apellido</td>
+							<td>@item.Telefono</td>
+							<td>@item.Nacionalidad</td>							
+							<td>
+								<a href="editRegante/@item.ReganteId">
+									<img style="width: 28px; height: 28px;" src="iconos/ico_editar.png" />
+								</a>
+							</td>
+							<td>
+								<a href="detailsRegante/@item.ReganteId">
+									<img style="width: 28px; height: 28px;" src="iconos/ico_detalles.png" />
+								</a>
+							</td>
+							<td>
+								<a href="deleteRegante/@item.ReganteId">
+									<img style="width: 28px; height: 28px;" src="iconos/ico_eliminar.png" />
+								</a>
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr>
+						<td colspan="8" class="text-center">No se ha encontrado regantes</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+}
+else if(acceso == "denegado")
+{
+
+<style>
+
+	.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+	}
+
+		.container h1 {
+			font-size: 2.5rem;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.container p {
+			font-size: 1.2rem;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.container i {
+			font-size: 4rem;
+			color: #f44336;
+		}
+</style>
+
+
+<div class="container">
+	<i class="fas fa-exclamation-triangle"></i>
+	<h1>ACCESO RESTRINGIDO</h1>
+	<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+	<p>¡Regrese mas tarde!</p>
+</div>
+}
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+	private string filtro = "1", busqueda = "";
+
+	public List<Regantes> ListarRegantes = new List<Regantes>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		ListarRegantes = await RegantesService.Listar(c => true);
+	}
+
+	public async Task Buscar()
+	{
+		if (filtro == "1" && busqueda != "")
+		{
+			ListarRegantes = await RegantesService.Listar(c => c.CodigoRegante == busqueda);
+		}
+		else if (filtro == "2" && busqueda != "")
+		{
+			ListarRegantes = await RegantesService.Listar(p => p.Nombre == busqueda);
+		}
+		else if (filtro == "3" && busqueda != "")
+		{
+			ListarRegantes = await RegantesService.Listar(p => p.Cedula == busqueda);
+		}
+		if (busqueda == "")
+		{
+			ListarRegantes = await RegantesService.Listar(p => true);
+		}
+	}
+
+}
+

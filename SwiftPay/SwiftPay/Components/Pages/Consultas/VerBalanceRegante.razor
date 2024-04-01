@@ -1,0 +1,378 @@
+﻿@page "/verBalanceRegante"
+@page "/verBalanceRegante/{ReganteID:int}"
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject RegantesService RegantesService
+@inject DetalleReganteService DetalleReganteService
+@inject ParametrosService ParametrosService
+@inject PagosService PagosService
+@inject DetallePagosService DetallePagosService
+@inject EmpresaService EmpresaService
+
+@rendermode InteractiveServer
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+
+@inject NotificationService NotificationService
+<RadzenNotification />
+
+@if (acceso == "permitido")
+{
+	<div class="row">
+		<div class="col-9">
+			<div class="card mb-5" style="border-radius: 20px;">
+				<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+					<div class="row text-white text-center">
+						<h3>Datos del Regante</h3>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div class="row">
+						<div class="col-6">
+							<div>
+								<label class="fw-bold">Nombre:</label>
+								<span>@regante.Nombre @regante.Apellido</span>
+							</div>
+							<div>
+								<label class="fw-bold">Cedula:</label>
+								<span>@regante.Cedula</span>
+							</div>
+							<div>
+								<label class="fw-bold">Codigo Regante:</label>
+								<span>@regante.CodigoRegante</span>
+							</div>
+							<div>
+								<label class="fw-bold">Direccion:</label>
+								<span>@regante.Direccion</span>
+							</div>
+						</div>
+
+
+						<div class="col-6">
+							<div>
+								<label class="fw-bold">Telefono:</label>
+								<span>@regante.Telefono</span>
+							</div>
+							<div>
+								<label class="fw-bold">Tareas:</label>
+								<span>@tareasTotal</span>
+							</div>
+							<div>
+								<label class="fw-bold">Estado:</label>
+								<span>
+									@if (regante.Estado == true)
+									{
+										<text>Activo</text>
+									}
+									else
+									{
+										<text>Inactivo</text>
+									}
+								</span>
+							</div>
+							<div>
+								<label class="fw-bold">Ultimo Pago Regitrado:</label>
+								<span>@regante.FechaUltimoPago.ToString("dd/MM/yyyy")</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card  mb-5" style="border-radius: 20px;">
+				<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+					<div class="row text-white text-center">
+						<h3>Balance del Regante</h3>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<table class="table table-borderless">
+
+						<thead>
+							<tr>
+								<th>Descripcion</th>
+								<th>Monto</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Cuota Actual</td>
+								<td>RD$ @cuotaActual.ToString("N2") ( @cantidadPagosVencidos periodos )</td>
+							</tr>
+
+							<tr>
+								<td>Recargos</td>
+								<td>RD$ @regargos.ToString("N2")  @if (@cantidadPagosVencidos >= 2)
+									{
+										<text> ( @(cantidadPagosVencidos - 1) pediodos atrasados )</text>
+									}
+								</td>
+							</tr>
+
+							<tr>
+								<td>Cuota Suplementaria</td>
+								<td>RD$ @cuotaSuplementaria.ToString("N2")</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="text-end">
+						<label class="fw-bold">Total a pagar: </label>
+						<label>RD$ @totalPagar.ToString("N2")</label>
+					</div>
+				</div>
+
+				<div class="card-footer">
+					<div class="text-end">
+						<a href="consultaBalanceRegante" class="btn btn-danger"><i class="fas fa-reply"></i> Retroceder</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-3">
+			<div>
+				<div class="card" style="border-radius: 20px;">
+					<div class="card-header bg-primary" style="border-radius: 20px 20px 0px 0px;">
+						<div class="row text-white text-center">
+							<h3>Parcelas del Regante</h3>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<table class="table table-bordered">
+
+							<thead>
+								<tr>
+									<th>Parcela</th>
+									<th>Irrigacion</th>
+									<th>Tareas</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								@foreach (var item in ListadetalleRegantes)
+								{
+									<tr>
+										<td>@item.CodigoParcela</td>
+										<td>@item.TipoIrrigacion</td>
+										<td>@item.Tareas</td>
+									</tr>
+								}
+
+							</tbody>
+						</table>
+
+						<div class="text-end">
+							<label class="fw-bold">Tareas total:</label>
+							<label>@tareasTotal</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+else if (acceso == "denegado")
+{
+
+	<style>
+
+		.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+		}
+
+		.container h1 {
+		font-size: 2.5rem;
+		color: #333;
+		margin-bottom: 20px;
+		}
+
+		.container p {
+		font-size: 1.2rem;
+		color: #666;
+		margin-bottom: 30px;
+		}
+
+		.container i {
+		font-size: 4rem;
+		color: #f44336;
+		}
+	</style>
+
+
+	<div class="container">
+		<i class="fas fa-exclamation-triangle"></i>
+		<h1>ACCESO RESTRINGIDO</h1>
+		<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+		<p>¡Regrese mas tarde!</p>
+	</div>
+}
+
+
+
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Cobrador" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+
+	[Parameter]
+	public int ReganteID { get; set; }
+
+	public Regantes regante = new Regantes();
+	public DetalleRegante detalleRegante = new DetalleRegante();
+	public Parametros parametro = new Parametros();
+	public List<DetalleRegante> ListadetalleRegantes = new List<DetalleRegante>();
+
+	private float regargos = 0;
+	private float cuotaActual = 0;
+	private float cuotaSuplementaria = 0;
+
+	private int cantidadPagosVencidos = 0;
+	private float tareasTotal = 0;
+	private float subTotal = 0;
+	private float totalPagar = 0;
+
+
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		if (ReganteID > 0)
+		{
+			regante = await RegantesService.Buscar(ReganteID);
+
+			ListadetalleRegantes = await DetalleReganteService.Listar(d => d.ReganteId == ReganteID);
+
+			@foreach (var item in ListadetalleRegantes)
+			{
+				tareasTotal += item.Tareas;
+			}
+
+
+			parametro = await ParametrosService.Buscar(1);
+
+			if (parametro != null && regante != null)
+			{
+				var fechaActual = DateTime.Now;
+				var diferenciaDias = (fechaActual - regante.FechaUltimoPago).Days;
+				var diasPasados = diferenciaDias / parametro.TiempoProximoPago * parametro.TiempoProximoPago;
+
+				cantidadPagosVencidos = diasPasados / parametro.TiempoProximoPago;
+
+				if (cantidadPagosVencidos >= 1)
+				{
+					foreach (var item in ListadetalleRegantes)
+					{
+						if (item.TipoIrrigacion == "Bomba")
+						{
+							cuotaActual += item.Tareas * parametro.MontoBomba;
+						}
+						else if (item.TipoIrrigacion == "Gravedad")
+						{
+							cuotaActual += item.Tareas * parametro.MontoGravedad;
+						}
+					}
+
+					if (cantidadPagosVencidos >= 2)
+					{
+						regargos = (cuotaActual * parametro.PorcentajeRecargos / 100) * (cantidadPagosVencidos - 1);
+					}
+
+					cuotaActual *= cantidadPagosVencidos;
+					cuotaSuplementaria = regante.MontoSuplementerio;
+
+
+
+					subTotal = cuotaActual;
+					totalPagar = cuotaActual + regargos - cuotaSuplementaria;
+
+					Mensaje("Advertencia", "El regante tiene pagos vencidos!", 4000, "Advertencia");
+				}
+				else
+				{
+					Mensaje("Advertencia", "El regante no tiene pagos vencidos!", 4000, "Advertencia");
+				}
+			}
+
+
+		}
+	}
+
+	public void Mensaje(string cabecera, string mensaje, int tiempo, string tipo)
+	{
+		NotificationMessage objetoMensaje = null;
+
+		if (tipo == "Advertencia")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Warning,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Exito")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Error")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+
+		NotificationService.Notify(objetoMensaje);
+	}
+
+}

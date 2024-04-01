@@ -1,0 +1,176 @@
+﻿@page "/createAsociacion"
+
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject AsociacionesService AsociacionesService
+
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+@inject NotificationService NotificationService
+<RadzenNotification />
+
+<PageTitle>Registro de Asociacion</PageTitle>
+
+@if (acceso == "permitido")
+{
+<EditForm Model="asociacion" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+
+	<div class="card" style="border-radius: 20px;">
+		<div class="card-header bg-primary text-center" style="border-radius: 20px 20px 0px 0px;">
+			<div class="row text-white">
+				<h3>Registrar Nueva Asociacion</h3>
+			</div>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col">
+					<label class="fw-bold">Nombre:</label>
+					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="asociacion.Nombre"></InputText>
+					<ValidationMessage For="(() => asociacion.Nombre)" />
+				</div>
+			</div>
+		</div>
+
+		<div class="card-footer">
+			<div class="text-end">
+				<a href="centroAsociaciones" class="btn btn-danger"><i class="fas fa-reply"></i> Retroceder</a>
+				<button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+			</div>
+		</div>
+
+	</div>
+</EditForm>
+}
+else if(acceso == "denegado")
+{
+
+<style>
+
+	.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+	}
+
+		.container h1 {
+			font-size: 2.5rem;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.container p {
+			font-size: 1.2rem;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.container i {
+			font-size: 4rem;
+			color: #f44336;
+		}
+</style>
+
+
+<div class="container">
+	<i class="fas fa-exclamation-triangle"></i>
+	<h1>ACCESO RESTRINGIDO</h1>
+	<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+	<p>¡Regrese mas tarde!</p>
+</div>
+}
+
+
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+
+	public Asociaciones asociacion = new Asociaciones();
+
+	public async Task Guardar()
+	{
+		var guardo = await AsociacionesService.Guardar(this.asociacion);
+		if (guardo)
+		{
+			Mensaje("Exitoso", "Guardado con exito!", 4000, "Exito");
+			NavigationManager.NavigateTo("centroAsociaciones");
+		}
+		else
+		{
+			Mensaje("Error", "Hubo un error al guardar los datos!", 4000, "Error");
+		}
+	}
+
+	public void Mensaje(string cabecera, string mensaje, int tiempo, string tipo)
+	{
+		NotificationMessage objetoMensaje = null;
+
+		if (tipo == "Advertencia")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Warning,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Exito")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Error")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+
+		NotificationService.Notify(objetoMensaje);
+	}
+
+}

@@ -1,0 +1,400 @@
+﻿@page "/createRegante"
+
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject RegantesService RegantesService
+@inject DetalleReganteService DetalleReganteService
+
+@inject IJSRuntime JSRuntime
+@inject UsuariosService UsuariosService
+@inject AutentificacionService AutentificacionService
+
+
+@inject NotificationService NotificationService
+<RadzenNotification />
+
+<PageTitle>Registro de Regante</PageTitle>
+
+@if (acceso == "permitido")
+{
+<EditForm Model="regante" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+
+	<div class="card" style="border-radius: 20px;">
+		<div class="card-header bg-primary text-center" style="border-radius: 20px 20px 0px 0px;">
+			<div class="row text-white">
+				<h3>Registrar Nuevo Regante</h3>
+			</div>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-4">
+					<label class="fw-bold">Codigo:</label>
+					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.CodigoRegante"></InputText>
+					<ValidationMessage For="(() => regante.CodigoRegante)" />
+				</div>
+				<div class="col-4">
+					<label class="fw-bold">Cedula:</label>
+					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Cedula"></InputText>
+					<ValidationMessage For="(() => regante.Cedula)" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					<label class="fw-bold">Usuario:</label>
+					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Usuario"></InputText>
+					<ValidationMessage For="(() => regante.Usuario)" />
+				</div>
+				<div class="col-6">
+					<label class="fw-bold">Contraseña:</label>
+					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Contrasena"></InputText>
+					<ValidationMessage For="(() => regante.Contrasena)" />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<label class="fw-bold">Nombre:</label>
+					<InputText class="form-control" @bind-Value="regante.Nombre"></InputText>
+					<ValidationMessage For="(() => regante.Nombre)" />
+				</div>
+				<div class="col-4">
+					<label class="fw-bold">Apellido:</label>
+					<InputText class="form-control" @bind-Value="regante.Apellido"></InputText>
+					<ValidationMessage For="(() => regante.Apellido)" />
+				</div>
+				<div class="col-4">
+					<label class="fw-bold">Apodo:</label>
+					<InputText class="form-control" @bind-Value="regante.Apodo"></InputText>
+					<ValidationMessage For="(() => regante.Apodo)" />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-4">
+					<label class="fw-bold">Télefono:</label>
+					<InputText class="form-control" @bind-Value="regante.Telefono"></InputText>
+					<ValidationMessage For="(() => regante.Telefono)" />
+				</div>
+				<div class="col-4">
+					<label class="fw-bold">Correo Electronico:</label>
+					<InputText class="form-control" @bind-Value="regante.CorreoElectronico"></InputText>
+					<ValidationMessage For="(() => regante.CorreoElectronico)" />
+				</div>
+				<div class="col-4">
+					<label class="fw-bold">Nacionalidad:</label>
+					<select class="form-select" @bind="regante.Nacionalidad">
+						<option value="Española">Española</option>
+						<option value="Dominicana">Dominicana</option>
+						<option value="Estadounidense">Estadounidense</option>
+						<option value="Puertorriqueña">Puertorriqueña</option>
+						<option value="Mexicana">Mexicana</option>
+						<option value="Argentina">Argentina</option>
+						<option value="Chilena">Chilena</option>
+						<option value="Colombiana">Colombiana</option>
+						<option value="Brasileña">Brasileña</option>
+						<option value="Canadiense">Canadiense</option>
+						<option value="Cubana">Cubana</option>
+						<option value="Italiana">Italiana</option>
+						<option value="Francesa">Francesa</option>
+						<option value="Portuguesa">Portuguesa</option>
+						<option value="Japonesa">Japonesa</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<label class="fw-bold">Dirección:</label>
+					<InputTextArea class="form-control" @bind-Value="regante.Direccion"></InputTextArea>
+					<ValidationMessage For="(() => regante.Direccion)" />
+				</div>
+			</div>
+		</div>
+
+
+		<!-- INICIO DETALLES DE PARCELAS -->
+		<div class="card-header bg-primary text-white text-center">
+			<h3 style="font-weight: bold;" class="font-weight-bold">Parcelas Asociadas</h3>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="row justify-content-end align-items-end">
+					<label class="fw-bold">Parcela:</label>
+					<div class="col-4">
+						<InputText class="form-control" @bind-Value="codigoParcela"></InputText>
+					</div>
+					<div class="col-3">
+						<label class="fw-bold">Tareas:</label>
+						<InputNumber class="form-control" @bind-Value="tareaParcela"></InputNumber>
+					</div>
+					<div class="col-3">
+						<label class="fw-bold">Tipo Irrigacion:</label>
+						<select class="form-select" @bind="tipoIrrigacion">
+							<option value="Bomba">Bomba</option>
+							<option value="Gravedad">Gravedad</option>
+						</select>
+					</div>
+					<div class="col-2 justify-content-end align-items-end text-end">
+						<button type="button" class="btn btn-success" @onclick="agregarParcela"><i class="fas fa-plus"></i> Agregar</button>
+					</div>
+				</div>
+
+				<div class="mb-4"></div>
+				<table class="table table-bordered text-center">
+
+					<thead class="bg-secondary text-white">
+						<tr>
+							<th class="col-3">Parcela</th>
+							<th class="col-5">Tarea</th>
+							<th class="col-3">Tipo Irrigacion</th>
+							<th class="col-1">Eliminar</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						@if (ListaDetallesRegante.Any())
+						{
+							@foreach (var item in ListaDetallesRegante)
+							{
+								<tr>
+									<td>@item.CodigoParcela</td>
+									<td>@item.Tareas</td>
+									<td>@item.TipoIrrigacion</td>
+									<td class="col-1"><button style="background: transparent; border: none;" type="button" @onclick="(() => eliminarDetalle(item))"><i class="fas fa-trash"></i></button></td>
+								</tr>
+							}
+						}
+						else
+						{
+							<tr><td colspan="3">No hay parcelas asociadas...</td></tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- FIN DETALLES DE PARCELAS -->
+
+		<div class="card-footer">
+			<div class="text-end">
+				<a href="centroRegantes" class="btn btn-danger"><i class="fas fa-reply"></i> Retroceder</a>
+				<button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar</button>
+			</div>
+		</div>
+
+	</div>
+</EditForm>
+
+
+}
+else if(acceso == "denegado")
+{
+
+<style>
+
+	.container {
+		text-align: center;
+		max-width: 600px;
+		padding: 10px;
+		background-color: #fff;
+		border-radius: 10px;
+		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+		margin-top: 18%;
+	}
+
+		.container h1 {
+			font-size: 2.5rem;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.container p {
+			font-size: 1.2rem;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.container i {
+			font-size: 4rem;
+			color: #f44336;
+		}
+</style>
+
+
+<div class="container">
+	<i class="fas fa-exclamation-triangle"></i>
+	<h1>ACCESO RESTRINGIDO</h1>
+	<p>Disculpa las molestias, usted no tiene acceso a este apartado, no consta de suficientes permisos.</p>
+	<p>¡Regrese mas tarde!</p>
+</div>
+}
+
+
+@code {
+
+	public string acceso = "";
+
+	protected override async void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var buscado = await AutentificacionService.usuarioActual(JSRuntime, UsuariosService);
+			if (buscado != null)
+			{
+				if (buscado.Rol == "Gerente" || buscado.Rol == "Administrador")
+				{
+					acceso = "permitido";
+				}
+				else
+				{
+					acceso = "denegado";
+				}
+				StateHasChanged();
+			}
+			else
+			{
+				await AutentificacionService.CerrarSesion(JSRuntime);
+			}
+		}
+	}
+
+
+	private string codigoParcela = "";
+	private float tareaParcela = 0;
+	public string tipoIrrigacion = "Bomba";
+
+	public Regantes regante = new Regantes();
+	public List<DetalleRegante> ListaDetallesRegante = new List<DetalleRegante>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		regante.Nacionalidad = "Española";
+	}
+
+	public async Task Guardar()
+	{
+		this.regante.Estado = true;
+		int reganteID = await RegantesService.AgregarNuevo(this.regante);
+		if (reganteID != 0)
+		{
+
+			foreach (var detalle in ListaDetallesRegante)
+			{
+				DetalleRegante detalleReganteNew = new DetalleRegante();
+				detalleReganteNew.CodigoParcela = detalle.CodigoParcela;
+				detalleReganteNew.ReganteId = reganteID;
+				detalleReganteNew.Tareas = detalle.Tareas;
+				detalleReganteNew.TipoIrrigacion = detalle.TipoIrrigacion;
+
+				await DetalleReganteService.Guardar(detalleReganteNew);
+			}
+
+			Mensaje("Exitoso", "Guardado con exito!", 4000, "Exito");
+			NavigationManager.NavigateTo("centroRegantes");
+		}
+	}
+
+	public async Task agregarParcela()
+	{
+		bool apropiada = false;
+		bool existe = false;
+
+		if(tareaParcela != 0)
+		{
+			List<DetalleRegante> ListadetalleRegantesNew = new List<DetalleRegante>();
+			ListadetalleRegantesNew = await DetalleReganteService.Listar(d => true);
+
+			foreach (var item in ListadetalleRegantesNew)
+			{
+				if (item.CodigoParcela == codigoParcela)
+				{
+					apropiada = true;
+					return;
+				}
+			}
+			foreach (var item in ListaDetallesRegante)
+			{
+				if (item.CodigoParcela == codigoParcela)
+				{
+					existe = true;
+					return;
+				}
+			}
+
+			if (apropiada)
+			{
+				Mensaje("Advertencia", "Esta parcela ya la tiene otro regante", 4000, "Advertencia");
+				Console.WriteLine("Esta parcela ya le pertenece a otro regante");
+			}
+			else if (existe)
+			{
+				Mensaje("Advertencia", "Esta parcela ya esta agregada", 4000, "Advertencia");
+				Console.WriteLine("Esta parcela ya esta agregada");
+			}
+			else
+			{
+				DetalleRegante detalleRegante = new DetalleRegante();
+				detalleRegante.CodigoParcela = codigoParcela;
+				detalleRegante.Tareas = tareaParcela;
+				detalleRegante.TipoIrrigacion = tipoIrrigacion;
+
+				ListaDetallesRegante.Add(detalleRegante);
+
+				codigoParcela = "";
+				tareaParcela = 0;
+				tipoIrrigacion = "Bomba";
+			}
+		}
+		else
+		{
+			Mensaje("Advertencia", "Debe indicar la cantidad de tareas de la parcela", 4000, "Advertencia");
+			Console.WriteLine("Debe indicar la cantidad de tareas de la parcela");
+		}
+	}
+
+	public async Task eliminarDetalle(DetalleRegante detalleRegante)
+	{
+		ListaDetallesRegante.Remove(detalleRegante);
+	}
+
+	public void Mensaje(string cabecera, string mensaje, int tiempo, string tipo)
+	{
+		NotificationMessage objetoMensaje = null;
+
+		if (tipo == "Advertencia")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Warning,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Exito")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+		else if (tipo == "Error")
+		{
+			objetoMensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = cabecera,
+					Detail = mensaje,
+					Duration = tiempo
+				};
+		}
+
+		NotificationService.Notify(objetoMensaje);
+	}
+
+}
