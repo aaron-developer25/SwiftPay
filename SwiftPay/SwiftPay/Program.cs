@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Radzen;
 using SwiftPay.Components;
 using SwiftPay.DAL;
+using SwiftPay.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,19 @@ var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContext<Context>(op => op.UseSqlServer(ConStr));
 
 
+//Services
 builder.Services.AddScoped<NotificationService>();
-
+builder.Services.AddScoped<EmpresaService>();
+builder.Services.AddScoped<AsociacionesService>();
+builder.Services.AddScoped<BloquesService>();
+builder.Services.AddScoped<SalidaCajaService>();
+builder.Services.AddScoped<DetalleReganteService>();
+builder.Services.AddScoped<ParametrosService>();
+builder.Services.AddScoped<RegantesService>();
+builder.Services.AddScoped<UsuariosService>();
+builder.Services.AddScoped<PagosService>();
+builder.Services.AddScoped<DetallePagosService>();
+builder.Services.AddScoped<AutentificacionService>();
 
 
 

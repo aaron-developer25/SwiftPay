@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using ProyectoJunta.Models;
+using SwiftPay.Models;
 using Radzen;
 using System.Security.Cryptography;
 
-namespace ProyectoJunta.Services
+namespace SwiftPay.Services
 {
     public class AutentificacionService
     {
