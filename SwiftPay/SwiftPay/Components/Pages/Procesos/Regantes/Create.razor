@@ -30,12 +30,12 @@
 		<div class="card-body">
 			<div class="row">
 				<div class="col-4">
-					<label class="fw-bold">Codigo:</label>
+						<label class="fw-bold">C&oacutedigo:</label>
 					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.CodigoRegante"></InputText>
 					<ValidationMessage For="(() => regante.CodigoRegante)" />
 				</div>
 				<div class="col-4">
-					<label class="fw-bold">Cedula:</label>
+						<label class="fw-bold">C&eacutedula:</label>
 					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Cedula"></InputText>
 					<ValidationMessage For="(() => regante.Cedula)" />
 				</div>
@@ -78,7 +78,7 @@
 					<ValidationMessage For="(() => regante.Telefono)" />
 				</div>
 				<div class="col-4">
-					<label class="fw-bold">Correo Electronico:</label>
+						<label class="fw-bold">Correo Electr&oacutenico:</label>
 					<InputText class="form-control" @bind-Value="regante.CorreoElectronico"></InputText>
 					<ValidationMessage For="(() => regante.CorreoElectronico)" />
 				</div>
@@ -131,7 +131,7 @@
 						<InputNumber class="form-control" @bind-Value="tareaParcela"></InputNumber>
 					</div>
 					<div class="col-3">
-						<label class="fw-bold">Tipo Irrigacion:</label>
+							<label class="fw-bold">Tipo Irrigaci&oacuten:</label>
 						<select class="form-select" @bind="tipoIrrigacion">
 							<option value="Bomba">Bomba</option>
 							<option value="Gravedad">Gravedad</option>
@@ -149,7 +149,7 @@
 						<tr>
 							<th class="col-3">Parcela</th>
 							<th class="col-5">Tarea</th>
-							<th class="col-3">Tipo Irrigacion</th>
+						    <th class="col-3">Tipo Irrigaci&oacuten</th>
 							<th class="col-1">Eliminar</th>
 						</tr>
 					</thead>
