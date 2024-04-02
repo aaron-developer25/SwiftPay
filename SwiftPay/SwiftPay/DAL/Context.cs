@@ -6,8 +6,6 @@ namespace SwiftPay.DAL
 	public class Context : DbContext
 	{
 		public DbSet<Empresa> Empresas { get; set; }
-		public DbSet<Asociaciones> Asociaciones { get; set; }
-		public DbSet<Bloques> Bloques { get; set; }
 		public DbSet<SalidaCaja> SalidaCaja { get; set; }
 		public DbSet<Regantes> Regantes { get; set; }
 		public DbSet<DetalleRegante> DetalleRegantes { get; set; }

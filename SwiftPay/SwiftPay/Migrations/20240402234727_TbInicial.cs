@@ -6,37 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SwiftPay.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class TbInicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Asociaciones",
-                columns: table => new
-                {
-                    AsociacionId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Asociaciones", x => x.AsociacionId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Bloques",
-                columns: table => new
-                {
-                    BloqueId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nombre = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bloques", x => x.BloqueId);
-                });
-
             migrationBuilder.CreateTable(
                 name: "DetallePagos",
                 columns: table => new
@@ -78,7 +52,7 @@ namespace SwiftPay.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Imagen = table.Column<byte[]>(type: "BLOB", nullable: true),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    RNC = table.Column<string>(type: "TEXT", maxLength: 9, nullable: false),
+                    RNC = table.Column<string>(type: "TEXT", nullable: false),
                     Telefono = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     Direccion = table.Column<string>(type: "TEXT", nullable: false),
                     CorreoElectronico = table.Column<string>(type: "TEXT", nullable: false),
@@ -147,7 +121,9 @@ namespace SwiftPay.Migrations
                     Direccion = table.Column<string>(type: "TEXT", nullable: false),
                     Estado = table.Column<bool>(type: "INTEGER", nullable: false),
                     FechaUltimoPago = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    MontoSuplementerio = table.Column<float>(type: "REAL", nullable: false)
+                    MontoSuplementerio = table.Column<float>(type: "REAL", nullable: false),
+                    Bloque = table.Column<string>(type: "TEXT", nullable: false),
+                    Asociacion = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -195,18 +171,12 @@ namespace SwiftPay.Migrations
             migrationBuilder.InsertData(
                 table: "Usuarios",
                 columns: new[] { "UsuarioId", "Apellido", "Cedula", "Contrasena", "CorreoElectronico", "Direccion", "Nombre", "Rol", "Telefono", "Usuario" },
-                values: new object[] { 1, "del Sistema", "000-0000000-0", "12345", "administrador-sistema@gmail.com", "Ninguna", "Administrador", "Administrador", "8090000000", "administrador" });
+                values: new object[] { 1, "Del Sistema", "00000000000", "Admin12345!!", "administrador-sistema@gmail.com", "Ninguna", "Administrador", "Administrador", "8090000000", "administrador" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Asociaciones");
-
-            migrationBuilder.DropTable(
-                name: "Bloques");
-
             migrationBuilder.DropTable(
                 name: "DetallePagos");
 

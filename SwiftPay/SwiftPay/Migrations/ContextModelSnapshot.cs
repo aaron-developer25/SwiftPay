@@ -17,36 +17,6 @@ namespace SwiftPay.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
-            modelBuilder.Entity("SwiftPay.Models.Asociaciones", b =>
-                {
-                    b.Property<int>("AsociacionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("AsociacionId");
-
-                    b.ToTable("Asociaciones");
-                });
-
-            modelBuilder.Entity("SwiftPay.Models.Bloques", b =>
-                {
-                    b.Property<int>("BloqueId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("BloqueId");
-
-                    b.ToTable("Bloques");
-                });
-
             modelBuilder.Entity("SwiftPay.Models.DetallePagos", b =>
                 {
                     b.Property<int>("DetallePagoId")
@@ -129,7 +99,6 @@ namespace SwiftPay.Migrations
 
                     b.Property<string>("RNC")
                         .IsRequired()
-                        .HasMaxLength(9)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Telefono")
@@ -220,6 +189,13 @@ namespace SwiftPay.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Apodo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Asociacion")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Bloque")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Cedula")
@@ -349,9 +325,9 @@ namespace SwiftPay.Migrations
                         new
                         {
                             UsuarioId = 1,
-                            Apellido = "del Sistema",
-                            Cedula = "000-0000000-0",
-                            Contrasena = "12345",
+                            Apellido = "Del Sistema",
+                            Cedula = "00000000000",
+                            Contrasena = "Admin12345!!",
                             CorreoElectronico = "administrador-sistema@gmail.com",
                             Direccion = "Ninguna",
                             Nombre = "Administrador",

@@ -53,5 +53,11 @@ namespace SwiftPay.Models
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
         public float MontoSuplementerio { get; set; }
 
+	    [Required(ErrorMessage = "Este campo es obligatorio")]
+	    public string? Bloque {  get; set; }
+
+		[RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ ]*$", ErrorMessage = "El nombre debe comenzar con una letra mayúscula y no debe contener números ni símbolos.")]
+		public string? Asociacion {  get; set; }
+
     }
 }

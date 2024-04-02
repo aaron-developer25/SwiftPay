@@ -17,8 +17,6 @@ builder.Services.AddDbContext<Context>(options => options.UseSqlite(ConStr));
 //Services
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<EmpresaService>();
-builder.Services.AddScoped<AsociacionesService>();
-builder.Services.AddScoped<BloquesService>();
 builder.Services.AddScoped<SalidaCajaService>();
 builder.Services.AddScoped<DetalleReganteService>();
 builder.Services.AddScoped<ParametrosService>();
