@@ -34,7 +34,7 @@
 				<div class="col-3">
 					<label class="fw-bold">Filtrar por:</label>
 					<select class="form-select" @bind="filtro">
-						<option value="1">Codigo</option>
+						<option value="1">C&oacutedigo</option>
 						<option value="2">Fecha</option>
 					</select>
 				</div>
@@ -44,7 +44,7 @@
 					{
 						<label class="fw-bold">Búsqueda:</label>
 						<div class="input-group">
-							<InputText class="form-control" @bind-Value="busqueda" placeholder="Introduzca aqui"></InputText>
+							<InputText class="form-control" @bind-Value="busqueda" placeholder="Introduzca aqu&iacute"></InputText>
 							<button class="btn btn-outline-primary" @onclick="Buscar"><i class="fas fa-search"></i> Buscar</button>
 						</div>
 					}
@@ -63,10 +63,10 @@
 			<table class="table table-bordered text-center">
 				<thead class="bg-primary text-white">
 					<tr>
-						<th>Codigo</th>
+						<th>C&oacutedigo</th>
 						<th>Regante</th>
 						<th>Fecha</th>
-						<th>Metodo de Pago</th>
+						<th>M&eacutetodo de Pago</th>
 						<th>Estado</th>
 						<th>SubTotal</th>
 						<th>Total</th>
@@ -359,7 +359,7 @@ else if (acceso == "denegado")
 				<div class="modal-body" style="height: 25rem; overflow-y: auto;">
 					<div class="row">
 						<div class="col-6">
-							<label class="fw-bold">Codigo: </label>
+							<label class="fw-bold">C&oacutedigo: </label>
 							<span>@pago.Codigo</span>
 						</div>
 						<div class="col-6">
@@ -374,7 +374,7 @@ else if (acceso == "denegado")
 							<span>@regante.Nombre</span>
 						</div>
 						<div class="mb-4">
-							<label class="fw-bold">Telefono: </label>
+							<label class="fw-bold">Tel&eacutefono: </label>
 							<span>@regante.Telefono</span>
 						</div>
 					</div>
