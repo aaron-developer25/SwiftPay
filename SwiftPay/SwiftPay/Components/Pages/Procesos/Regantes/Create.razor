@@ -34,11 +34,11 @@
 					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.CodigoRegante"></InputText>
 					<ValidationMessage For="(() => regante.CodigoRegante)" />
 				</div>
-				<div class="col-4">
-						<label class="fw-bold">C&eacutedula:</label>
-					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Cedula"></InputText>
-					<ValidationMessage For="(() => regante.Cedula)" />
-				</div>
+					<div class="col-4">
+						<label class="fw-bold">Cédula:</label>
+						<input type="text" class="form-control" @bind="regante.Cedula" @oninput="FormatCedula">
+						<span id="cedulaValidationMessage"></span>
+					</div>
 
 					<div class="col-4">
 						<label class="fw-bold">Bloque:</label>
@@ -403,6 +403,32 @@ else if(acceso == "denegado")
 		}
 
 		NotificationService.Notify(objetoMensaje);
+	}
+
+	private void FormatCedula(ChangeEventArgs e)
+	{
+		string cedula = e.Value?.ToString()?.Trim();
+		if (string.IsNullOrEmpty(cedula))
+		{
+			regante.Cedula = cedula;
+			return;
+		}
+
+		// Remover guiones existentes
+		cedula = cedula.Replace("-", "");
+
+		// Insertar guiones según la longitud de la cédula
+		string formattedCedula = "";
+		for (int i = 0; i < cedula.Length; i++)
+		{
+			if (i == 3 || i == 10)
+			{
+				formattedCedula += "-";
+			}
+			formattedCedula += cedula[i];
+		}
+
+		regante.Cedula = formattedCedula;
 	}
 
 }
