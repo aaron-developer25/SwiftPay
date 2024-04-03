@@ -29,90 +29,98 @@
 		</div>
 
 		<div class="card-body">
-			<div class="row">
-				<div class="col-4">
+				<div class="row">
+					<div class="col-4">
 						<label class="fw-bold">C&oacutedigo:</label>
-					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.CodigoRegante"></InputText>
-					<ValidationMessage For="(() => regante.CodigoRegante)" />
-				</div>
-				<div class="col-4">
+						<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.CodigoRegante"></InputText>
+						<ValidationMessage For="(() => regante.CodigoRegante)" />
+					</div>
+					<div class="col-4">
 						<label class="fw-bold">C&eacutedula:</label>
-					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Cedula"></InputText>
-					<ValidationMessage For="(() => regante.Cedula)" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-6">
-					<label class="fw-bold">Usuario:</label>
-					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Usuario"></InputText>
-					<ValidationMessage For="(() => regante.Usuario)" />
-				</div>
-				<div class="col-6">
-					<label class="fw-bold">Contraseña:</label>
-					<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Contrasena"></InputText>
-					<ValidationMessage For="(() => regante.Contrasena)" />
-				</div>
-			</div>
+						<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Cedula"></InputText>
+						<ValidationMessage For="(() => regante.Cedula)" />
+					</div>
 
-			<div class="row">
-				<div class="col-4">
-					<label class="fw-bold">Nombre:</label>
-					<InputText class="form-control" @bind-Value="regante.Nombre"></InputText>
-					<ValidationMessage For="(() => regante.Nombre)" />
-				</div>
-				<div class="col-4">
-					<label class="fw-bold">Apellido:</label>
-					<InputText class="form-control" @bind-Value="regante.Apellido"></InputText>
-					<ValidationMessage For="(() => regante.Apellido)" />
-				</div>
-				<div class="col-4">
-					<label class="fw-bold">Apodo:</label>
-					<InputText class="form-control" @bind-Value="regante.Apodo"></InputText>
-					<ValidationMessage For="(() => regante.Apodo)" />
-				</div>
-			</div>
+					<div class="col-4">
+						<label class="fw-bold">Bloque:</label>
+						<InputText class="form-control" @bind-Value="regante.Bloque"></InputText>
+						<ValidationMessage For="(() => regante.Bloque)" />
+					</div>
 
-			<div class="row">
-				<div class="col-4">
-					<label class="fw-bold">Télefono:</label>
-					<InputText class="form-control" @bind-Value="regante.Telefono"></InputText>
-					<ValidationMessage For="(() => regante.Telefono)" />
 				</div>
-				<div class="col-4">
+
+				<div class="row">
+
+					<div class="col-4">
+						<label class="fw-bold">Asociaci&oacuten:</label>
+						<InputText class="form-control" @bind-Value="regante.Asociacion"></InputText>
+						<ValidationMessage For="(() => regante.Asociacion)" />
+					</div>
+
+					<div class="col-4">
+						<label class="fw-bold">Nombre:</label>
+						<InputText class="form-control" @bind-Value="regante.Nombre"></InputText>
+						<ValidationMessage For="(() => regante.Nombre)" />
+					</div>
+					<div class="col-4">
+						<label class="fw-bold">Apellido:</label>
+						<InputText class="form-control" @bind-Value="regante.Apellido"></InputText>
+						<ValidationMessage For="(() => regante.Apellido)" />
+					</div>
+
+				</div>
+
+				<div class="row">
+
+					<div class="col-4">
+						<label class="fw-bold">Apodo:</label>
+						<InputText class="form-control" @bind-Value="regante.Apodo"></InputText>
+						<ValidationMessage For="(() => regante.Apodo)" />
+					</div>
+
+					<div class="col-4">
+						<label class="fw-bold">Télefono:</label>
+						<InputText class="form-control" @bind-Value="regante.Telefono"></InputText>
+						<ValidationMessage For="(() => regante.Telefono)" />
+					</div>
+
+					<div class="col-4">
+						<label class="fw-bold">Nacionalidad:</label>
+						<select class="form-select" @bind="regante.Nacionalidad">
+							<option value="Dominicana">Dominicana</option>
+						</select>
+					</div>
+
+				</div>
+
+
+				<div class="row">
+					<div class="col-4">
+						<label class="fw-bold">Usuario:</label>
+						<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Usuario"></InputText>
+						<ValidationMessage For="(() => regante.Usuario)" />
+					</div>
+					<div class="col-4">
+						<label class="fw-bold">Contraseña:</label>
+						<InputText style="margin-right: 10px;" class="form-control" @bind-Value="regante.Contrasena"></InputText>
+						<ValidationMessage For="(() => regante.Contrasena)" />
+					</div>
+					<div class="col-4">
 						<label class="fw-bold">Correo Electr&oacutenico:</label>
-					<InputText class="form-control" @bind-Value="regante.CorreoElectronico"></InputText>
-					<ValidationMessage For="(() => regante.CorreoElectronico)" />
+						<InputText class="form-control" @bind-Value="regante.CorreoElectronico"></InputText>
+						<ValidationMessage For="(() => regante.CorreoElectronico)" />
+					</div>
 				</div>
-				<div class="col-4">
-					<label class="fw-bold">Nacionalidad:</label>
-					<select class="form-select" @bind="regante.Nacionalidad">
-						<option value="Española">Española</option>
-						<option value="Dominicana">Dominicana</option>
-						<option value="Estadounidense">Estadounidense</option>
-						<option value="Puertorriqueña">Puertorriqueña</option>
-						<option value="Mexicana">Mexicana</option>
-						<option value="Argentina">Argentina</option>
-						<option value="Chilena">Chilena</option>
-						<option value="Colombiana">Colombiana</option>
-						<option value="Brasileña">Brasileña</option>
-						<option value="Canadiense">Canadiense</option>
-						<option value="Cubana">Cubana</option>
-						<option value="Italiana">Italiana</option>
-						<option value="Francesa">Francesa</option>
-						<option value="Portuguesa">Portuguesa</option>
-						<option value="Japonesa">Japonesa</option>
-					</select>
-				</div>
-			</div>
 
-			<div class="row">
-				<div class="col">
-					<label class="fw-bold">Dirección:</label>
-					<InputTextArea class="form-control" @bind-Value="regante.Direccion"></InputTextArea>
-					<ValidationMessage For="(() => regante.Direccion)" />
+
+				<div class="row">
+					<div class="col">
+						<label class="fw-bold">Dirección:</label>
+						<InputTextArea class="form-control" @bind-Value="regante.Direccion"></InputTextArea>
+						<ValidationMessage For="(() => regante.Direccion)" />
+					</div>
 				</div>
 			</div>
-		</div>
 
 
 		<!-- INICIO DETALLES DE PARCELAS -->
