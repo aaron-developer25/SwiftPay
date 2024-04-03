@@ -14,6 +14,9 @@ namespace SwiftPay.Models
 
         public string? CodigoRegante { get; set; }
 
+		[Required(ErrorMessage = "Este Campo es Obligatorio")]
+		public DateTime Fecha {  get; set; } = DateTime.Now;
+
         [Required(ErrorMessage = "Este Campo es Obligatorio")]
         public string? Usuario { get; set; }
 

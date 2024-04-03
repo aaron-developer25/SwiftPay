@@ -12,6 +12,9 @@ namespace SwiftPay.Models
         [Key]
         public int UsuarioId { get; set; }
 
+		[Required(ErrorMessage = "Este Campo es Obligatorio")]
+		public DateTime Fecha { get; set; } = DateTime.Now;
+
         [Required(ErrorMessage = "El campo Nombre es obligatorio")]
         [RegularExpression(@"^[A-ZÁÉÍÓÚÑ][a-zA-ZÁÉÍÓÚÑ ]*$", ErrorMessage = "El nombre debe comenzar con una letra mayúscula y solo puede contener letras y espacios.")]
         public string? Nombre { get; set; }
