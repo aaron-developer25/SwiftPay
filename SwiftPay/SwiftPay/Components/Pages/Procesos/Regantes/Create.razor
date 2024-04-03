@@ -37,7 +37,7 @@
 					<div class="col-4">
 						<label class="fw-bold">Cédula:</label>
 						<input type="text" class="form-control" @bind="regante.Cedula" @oninput="FormatCedula">
-						<span id="cedulaValidationMessage"></span>
+						<ValidationMessage For="(() => regante.Cedula)" />
 					</div>
 
 					<div class="col-4">
@@ -79,7 +79,7 @@
 
 					<div class="col-4">
 						<label class="fw-bold">Télefono:</label>
-						<InputText class="form-control" @bind-Value="regante.Telefono"></InputText>
+						<InputText class="form-control" @bind-Value="regante.Telefono" @oninput="FormatTelefono"></InputText>
 						<ValidationMessage For="(() => regante.Telefono)" />
 					</div>
 
@@ -429,6 +429,32 @@ else if(acceso == "denegado")
 		}
 
 		regante.Cedula = formattedCedula;
+	}
+
+	private void FormatTelefono(ChangeEventArgs e)
+	{
+		string telefono = e.Value?.ToString()?.Trim();
+		if (string.IsNullOrEmpty(telefono))
+		{
+			regante.Telefono = telefono;
+			return;
+		}
+
+		// Remover guiones existentes
+		telefono = telefono.Replace("-", "");
+
+		// Insertar guiones según la longitud de la cédula
+		string formattedTelefono = "";
+		for (int i = 0; i < telefono.Length; i++)
+		{
+			if (i == 3 || i == 6)
+			{
+				formattedTelefono += "-";
+			}
+			formattedTelefono += telefono[i];
+		}
+
+		regante.Telefono = formattedTelefono;
 	}
 
 }

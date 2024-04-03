@@ -40,7 +40,7 @@ namespace SwiftPay.Models
         public string? Nacionalidad { get; set; }
 
 		[Required(ErrorMessage = "Este Campo es Obligatorio")]
-		[RegularExpression(@"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\W]{1,11}$", ErrorMessage = "La cédula debe tener máximo 11 caracteres alfanuméricos, incluyendo símbolos")]
+		[RegularExpression(@"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\W]{1,13}$", ErrorMessage = "La cédula debe tener máximo 13 caracteres alfanuméricos, incluyendo símbolos")]
 		public string? Cedula { get; set; }
 
 		[Required(ErrorMessage = "Este Campo es Obligatorio")]
