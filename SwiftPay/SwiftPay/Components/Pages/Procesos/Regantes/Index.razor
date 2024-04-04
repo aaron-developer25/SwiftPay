@@ -21,22 +21,32 @@
 
 	<div class="card-body">
 		<div class="row mb-4">
-			<div class="col-3">
-				<label class="fw-bold">Filtrar por:</label>
-				<select class="form-select" @bind="filtro">
-						<option value="1">C&oacutedigo Regante</option>
-					<option value="2">Nombre</option>
-						<option value="3">C&eacutedula</option>
-				</select>
-			</div>
-
-			<div class="col-6">
-				<label class="fw-bold">Búsqueda:</label>
-				<div class="input-group">
-					<InputText class="form-control" @bind-Value="busqueda" placeholder="Buscar"></InputText>
-					<button class="btn btn-outline-primary" @onclick="Buscar"><i class="fas fa-search"></i> Buscar</button>
+				<div class="col-4">
+					<label class="fw-bold">Filtrar por:</label>
+					<select class="form-select" @bind="filtro">
+						<option value="1">Código Regante</option>
+						<option value="2">Nombre</option>
+						<option value="3">Cédula</option>
+						<option value="4">Fecha</option>
+					</select>
 				</div>
-			</div>
+
+				<div class="col-6">
+					<label class="fw-bold">Búsqueda:</label>
+					<div class="input-group">
+						<InputText class="form-control" @bind-Value="busqueda" placeholder="Buscar"></InputText>
+						<button class="btn btn-outline-primary" @onclick="Buscar"><i class="fas fa-search"></i> Buscar</button>
+					</div>
+				</div>
+				
+				<div class="col-5">
+					<label class="fw-bold">Rango:</label>
+					<div class="input-group">
+						<InputDate @bind-Value="fechainicio" class="form-control"></InputDate>
+						<InputDate @bind-Value="fechafinal" class="form-control"></InputDate>
+					</div>
+				</div>
+
 
 			<div class="col d-flex justify-content-end align-items-end">
 				<a href="createRegante" class="btn btn-success"><i class="fas fa-plus"></i> Crear</a>
@@ -51,6 +61,7 @@
 					<th>Apellido</th>
 					<th>Télefono</th>
 					<th>Nacionalidad</th>
+				    <th>Fecha</th>
 					<th>Editar</th>
 					<th>Detalle</th>
 					<th>Eliminar</th>
@@ -66,7 +77,8 @@
 							<td>@item.Nombre</td>
 							<td>@item.Apellido</td>
 							<td>@item.Telefono</td>
-							<td>@item.Nacionalidad</td>							
+							<td>@item.Nacionalidad</td>
+							<td>@item.Fecha.ToString("dd/MM/yyyy")</td>
 							<td>
 								<a href="editRegante/@item.ReganteId">
 									<img style="width: 28px; height: 28px;" src="iconos/ico_editar.png" />
@@ -143,6 +155,8 @@ else if(acceso == "denegado")
 @code {
 
 	public string acceso = "";
+	public DateTime fechainicio { get; set; }
+	public DateTime fechafinal { get; set; }
 
 	protected override async void OnAfterRender(bool firstRender)
 	{
@@ -175,27 +189,38 @@ else if(acceso == "denegado")
 	protected override async Task OnInitializedAsync()
 	{
 		ListarRegantes = await RegantesService.Listar(c => true);
+
+		fechafinal = DateTime.Now;
+		fechainicio = DateTime.Now;
+	}
+		public async Task Filtrar()
+	{
+		ListarRegantes = await RegantesService.Listar(r => r.Fecha <= fechafinal && r.Fecha >= fechainicio);
 	}
 
-	public async Task Buscar()
-	{
-		if (filtro == "1" && busqueda != "")
-		{
-			ListarRegantes = await RegantesService.Listar(c => c.CodigoRegante == busqueda);
-		}
-		else if (filtro == "2" && busqueda != "")
-		{
-			ListarRegantes = await RegantesService.Listar(p => p.Nombre == busqueda);
-		}
-		else if (filtro == "3" && busqueda != "")
-		{
-			ListarRegantes = await RegantesService.Listar(p => p.Cedula == busqueda);
-		}
-		if (busqueda == "")
-		{
-			ListarRegantes = await RegantesService.Listar(p => true);
-		}
-	}
+	private async Task Buscar()
+    {
+        if (filtro == "1" && !string.IsNullOrWhiteSpace(busqueda))
+        {
+            ListarRegantes = await RegantesService.Listar(c => c.CodigoRegante == busqueda && c.Fecha <= fechafinal && c.Fecha >= fechainicio);
+        }
+        else if (filtro == "2" && !string.IsNullOrWhiteSpace(busqueda))
+        {
+            ListarRegantes = await RegantesService.Listar(p => p.Nombre == busqueda && p.Fecha <= fechafinal && p.Fecha >= fechainicio);
+        }
+        else if (filtro == "3" && !string.IsNullOrWhiteSpace(busqueda))
+        {
+            ListarRegantes = await RegantesService.Listar(p => p.Cedula == busqueda && p.Fecha <= fechafinal && p.Fecha >= fechainicio);
+        }
+        else if (filtro == "4")
+        {
+            ListarRegantes = await RegantesService.Listar(r => r.Fecha <= fechafinal && r.Fecha >= fechainicio);
+        }
+        else
+        {
+            ListarRegantes = await RegantesService.Listar(r => r.Fecha <= fechafinal && r.Fecha >= fechainicio);
+        }
+    }
 
 }
 

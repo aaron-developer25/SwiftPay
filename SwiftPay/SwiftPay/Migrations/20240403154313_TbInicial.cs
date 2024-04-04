@@ -109,6 +109,7 @@ namespace SwiftPay.Migrations
                     ReganteId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CodigoRegante = table.Column<string>(type: "TEXT", nullable: true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Usuario = table.Column<string>(type: "TEXT", nullable: false),
                     Contrasena = table.Column<string>(type: "TEXT", nullable: false),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
@@ -153,6 +154,7 @@ namespace SwiftPay.Migrations
                 {
                     UsuarioId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
                     Apellido = table.Column<string>(type: "TEXT", nullable: false),
                     Cedula = table.Column<string>(type: "TEXT", nullable: false),
@@ -170,8 +172,8 @@ namespace SwiftPay.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuarios",
-                columns: new[] { "UsuarioId", "Apellido", "Cedula", "Contrasena", "CorreoElectronico", "Direccion", "Nombre", "Rol", "Telefono", "Usuario" },
-                values: new object[] { 1, "Del Sistema", "00000000000", "Admin12345!!", "administrador-sistema@gmail.com", "Ninguna", "Administrador", "Administrador", "8090000000", "administrador" });
+                columns: new[] { "UsuarioId", "Apellido", "Cedula", "Contrasena", "CorreoElectronico", "Direccion", "Fecha", "Nombre", "Rol", "Telefono", "Usuario" },
+                values: new object[] { 1, "Del Sistema", "00000000000", "Admin12345!!", "administrador-sistema@gmail.com", "Ninguna", new DateTime(2024, 4, 3, 11, 43, 13, 651, DateTimeKind.Local).AddTicks(2230), "Administrador", "Administrador", "8090000000", "administrador" });
         }
 
         /// <inheritdoc />

@@ -113,6 +113,12 @@
 
 
 			<div class="row">
+					<div class="col">
+						<label class="fw-bold">Fecha:</label>
+						<InputDate class="form-control" @bind-Value="regante.Fecha"></InputDate>
+						<ValidationMessage For="(() => regante.Fecha)" />
+					</div>
+
 				<div class="col">
 					<label class="fw-bold">Dirección:</label>
 					<InputTextArea class="form-control" @bind-Value="regante.Direccion"></InputTextArea>

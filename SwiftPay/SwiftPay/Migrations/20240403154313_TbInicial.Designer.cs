@@ -11,7 +11,7 @@ using SwiftPay.DAL;
 namespace SwiftPay.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240402234727_TbInicial")]
+    [Migration("20240403154313_TbInicial")]
     partial class TbInicial
     {
         /// <inheritdoc />
@@ -223,6 +223,9 @@ namespace SwiftPay.Migrations
                     b.Property<bool>("Estado")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("FechaUltimoPago")
                         .HasColumnType("TEXT");
 
@@ -304,6 +307,9 @@ namespace SwiftPay.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -333,6 +339,7 @@ namespace SwiftPay.Migrations
                             Contrasena = "Admin12345!!",
                             CorreoElectronico = "administrador-sistema@gmail.com",
                             Direccion = "Ninguna",
+                            Fecha = new DateTime(2024, 4, 3, 11, 43, 13, 651, DateTimeKind.Local).AddTicks(2230),
                             Nombre = "Administrador",
                             Rol = "Administrador",
                             Telefono = "8090000000",
